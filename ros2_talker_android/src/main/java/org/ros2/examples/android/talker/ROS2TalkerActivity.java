@@ -28,8 +28,8 @@ import android.widget.TextView;
 import android.os.AsyncTask;
 
 import org.ros2.rcljava.RCLJava;
-import org.ros2.rcljava.Node;
-import org.ros2.rcljava.Publisher;
+import org.ros2.rcljava.node.Node;
+import org.ros2.rcljava.node.topic.Publisher;
 
 public class ROS2TalkerActivity extends Activity
 {
