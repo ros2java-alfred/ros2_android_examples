@@ -8,8 +8,8 @@ services:
 env:
   global:
     - ANDROID_SDK_VER=android-sdk-linux_x86-1.6_r1
-    - ANDROID_HOME=$HOME/$ANDROID_SDK_VER
-    - CURRENT_PATH=$HOME/ros2_java_ws
+    - ANDROID_HOME=$HOME/build/$ANDROID_SDK_VER
+    - CURRENT_PATH=$HOME/build/ros2_java_ws
     - ROS2JAVA_PATH=$CURRENT_PATH/src/android-cmake/android-cmake/android.toolchain.cmake
     - PYTHON_PATH=/usr/bin/python3
     - ANDROID_NDK_VER=android-ndk-r12b
