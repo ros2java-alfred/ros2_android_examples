@@ -7,16 +7,17 @@ services:
 
 env:
   global:
+    - HOME_BUILD=$HOME/build
     - ANDROID_SDK_VER=android-sdk-linux_x86-1.6_r1
-    - ANDROID_HOME=$HOME/build/$ANDROID_SDK_VER
-    - CURRENT_PATH=$HOME/build/ros2_java_ws
-    - ROS2JAVA_PATH=$CURRENT_PATH/src/android-cmake/android-cmake/android.toolchain.cmake
-    - PYTHON_PATH=/usr/bin/python3
     - ANDROID_NDK_VER=android-ndk-r12b
-    - ANDROID_NDK=$HOME/$ANDROID_NDK_VER
+    - ANDROID_HOME=$HOME_BUILD/$ANDROID_SDK_VER
+    - ANDROID_NDK=$HOME_BUILD/$ANDROID_NDK_VER
     - ANDROID_VER=android-21
     - ANDROID_GCC=arm-linux-androideabi-clang
     - ANDROID_ABI=armeabi-v7a
+    - ROS2WS=$HOME_BUILD/ros2_java_ws
+    - ROS2JAVA_PATH=$ROS2WS/src/android-cmake/android-cmake/android.toolchain.cmake
+    - PYTHON_PATH=/usr/bin/python3
 
 cache:
   directories:
@@ -25,24 +26,24 @@ cache:
 
 before_install:
 - docker pull theosakamg7/ros2java:latest
-- cd $HOME && wget https://dl.google.com/android/repository/$ANDROID_NDK_VER-linux-x86_64.zip && unzip $ANDROID_NDK_VER-linux-x86_64.zip &>/dev/null && ls -lFa ./
-- cd $HOME && wget https://dl.google.com/android/archives/$ANDROID_SDK_VER.tgz && tar -xvzf $ANDROID_SDK_VER.tgz &>/dev/null && ls -lFa ./
-- cd $HOME && mkdir -p ament_ws/src && cd $HOME/ament_ws
+- cd $HOME_BUILD && wget https://dl.google.com/android/repository/$ANDROID_NDK_VER-linux-x86_64.zip && unzip $ANDROID_NDK_VER-linux-x86_64.zip &>/dev/null && ls -lFa ./
+- cd $HOME_BUILD && wget https://dl.google.com/android/archives/$ANDROID_SDK_VER.tgz && tar -xvzf $ANDROID_SDK_VER.tgz &>/dev/null && ls -lFa ./
+- cd $HOME_BUILD && mkdir -p ament_ws/src && cd $HOME_BUILD/ament_ws
 - docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c "/usr/bin/wget https://gist.githubusercontent.com/Theosakamg/e6084cfafa6b7ea690104424cef970a2/raw/ament_java.repos"
 - docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c "/usr/bin/vcs import src < ament_java.repos"
 - docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c "src/ament/ament_tools/scripts/ament.py build --symlink-install --isolated"
-- cd $HOME && mkdir -p ros2_java_ws/src && cd $HOME/ros2_java_ws
+- cd $HOME_BUILD && mkdir -p $ROS2WS/src && cd $ROS2WS
 - docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c "/usr/bin/wget https://gist.githubusercontent.com/Theosakamg/617cd893813163cdcb9943a08d667964/raw/ros2_java_android.repos"
 - docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c "/usr/bin/vcs import src < ros2_java_android.repos"
-- cd $HOME/ros2_java_ws/src/ros2/rosidl_typesupport && patch -p1 < ../../ros2_java/ros2_java/rosidl_ros2_java.diff
-- rm -rf $HOME/ros2_java_ws/src/ros2_java/ros2_android_examples && ln -s $HOME/ros2java-alfred/ros2_android_examples $HOME/ros2_java_ws/src/ros2_java/ros2_android_examples
-- #touch $HOME/ros2_java_ws/src/ros2/rosidl/python_cmake_module/AMENT_IGNORE && touch $HOME/ros2_java_ws/src/ros2/rosidl/rosidl_generator_py/AMENT_IGNORE
-- cd $HOME/ros2_java_ws/src/eProsima/Fast-RTPS && git submodule init && git submodule update
-- cd $HOME && docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c ". ament_ws/install_isolated/local_setup.sh && cd $HOME/ros2_java_ws && ament build --isolated $ONLY_PACKAGE --cmake-args -DPYTHON_EXECUTABLE=$PYTHON_PATH -DCMAKE_TOOLCHAIN_FILE=$ROS2JAVA_PATH -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_NATIVE_API_LEVEL=$ANDROID_VER -DANDROID_TOOLCHAIN_NAME=$ANDROID_GCC -DANDROID_STL=gnustl_shared -DANDROID_ABI=$ANDROID_ABI -DANDROID_NDK=$ANDROID_NDK -DANDROID_HOME=$ANDROID_HOME -DTHIRDPARTY=ON -DCOMPILE_EXAMPLES=OFF -- --ament-cmake-args -DPYTHON_EXECUTABLE=$PYTHON_PATH -DCMAKE_TOOLCHAIN_FILE=$ROS2JAVA_PATH -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_NATIVE_API_LEVEL=$ANDROID_VER -DANDROID_TOOLCHAIN_NAME=$ANDROID_GCC -DANDROID_STL=gnustl_shared -DANDROID_ABI=$ANDROID_ABI -DANDROID_NDK=$ANDROID_NDK -DANDROID_HOME=$ANDROID_HOME -DTHIRDPARTY=ON -DCOMPILE_EXAMPLES=OFF -- --ament-gradle-args -Pament.android_stl=gnustl_shared -Pament.android_abi=$ANDROID_ABI -Pament.android_ndk=$ANDROID_NDK --"
+- cd $ROS2WS/src/ros2/rosidl_typesupport && patch -p1 < ../../ros2_java/ros2_java/rosidl_ros2_java.diff
+- rm -rf $ROS2WS/src/ros2_java/ros2_android_examples && ln -s $HOME_BUILD/ros2java-alfred/ros2_android_examples $ROS2WS/src/ros2_java/ros2_android_examples
+- #touch $ROS2WS/src/ros2/rosidl/python_cmake_module/AMENT_IGNORE && touch $ROS2WS/src/ros2/rosidl/rosidl_generator_py/AMENT_IGNORE
+- cd $ROS2WS/src/eProsima/Fast-RTPS && git submodule init && git submodule update
+- cd $ROS2WS && docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c ". ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && ament build --isolated $ONLY_PACKAGE --cmake-args -DPYTHON_EXECUTABLE=$PYTHON_PATH -DCMAKE_TOOLCHAIN_FILE=$ROS2JAVA_PATH -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_NATIVE_API_LEVEL=$ANDROID_VER -DANDROID_TOOLCHAIN_NAME=$ANDROID_GCC -DANDROID_STL=gnustl_shared -DANDROID_ABI=$ANDROID_ABI -DANDROID_NDK=$ANDROID_NDK -DANDROID_HOME=$ANDROID_HOME -DTHIRDPARTY=ON -DCOMPILE_EXAMPLES=OFF -- --ament-cmake-args -DPYTHON_EXECUTABLE=$PYTHON_PATH -DCMAKE_TOOLCHAIN_FILE=$ROS2JAVA_PATH -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_NATIVE_API_LEVEL=$ANDROID_VER -DANDROID_TOOLCHAIN_NAME=$ANDROID_GCC -DANDROID_STL=gnustl_shared -DANDROID_ABI=$ANDROID_ABI -DANDROID_NDK=$ANDROID_NDK -DANDROID_HOME=$ANDROID_HOME -DTHIRDPARTY=ON -DCOMPILE_EXAMPLES=OFF -- --ament-gradle-args -Pament.android_stl=gnustl_shared -Pament.android_abi=$ANDROID_ABI -Pament.android_ndk=$ANDROID_NDK --"
 
 
 script:
-- cd $HOME && docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c ". ament_ws/install_isolated/local_setup.sh && cd $HOME/ros2_java_ws #&& ament test --isolated --only rcljava"
+- cd $HOME_BUILD && docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c ". ament_ws/install_isolated/local_setup.sh && cd $ROS2WS #&& ament test --isolated --only rcljava"
 
 after_success:
   - coveralls
