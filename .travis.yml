@@ -8,6 +8,8 @@ services:
 before_install:
 - docker pull theosakamg7/ros2java:latest
 - export ANDROID_HOME=/opt/android/android-sdk && export CURRENT_PATH=/home/travis/build/ros2_java_ws && export ROS2JAVA_PATH=$CURRENT_PATH/src/android-cmake/android-cmake/android.toolchain.cmake && export PYTHON_PATH=/usr/bin/python3 && export ANDROID_NDK=/opt/android/android-ndk-r12b && export ANDROID_VER=android-21 && export ANDROID_GCC=arm-linux-androideabi-clang && export ANDROID_ABI=armeabi-v7a
+- wget https://dl.google.com/android/repository/android-ndk-r12b-linux-x86_64.zip && unzip android-ndk-r12b-linux-x86_64.zip && ls -lFa ./
+- wget https://dl.google.com/android/archives/android-sdk-linux_x86-1.6_r1.tgz && tar xvjf android-sdk-linux_x86-1.6_r1.tgz && ls -lFa ./
 - cd /home/travis/build && mkdir -p ament_ws/src && cd /home/travis/build/ament_ws
 - docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c "/usr/bin/wget https://gist.githubusercontent.com/Theosakamg/e6084cfafa6b7ea690104424cef970a2/raw/ament_java.repos"
 - docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c "/usr/bin/vcs import src < ament_java.repos"
