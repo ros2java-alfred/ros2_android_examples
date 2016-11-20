@@ -6,16 +6,17 @@ services:
   - docker
 
 env:
-- ANDROID_SDK_VER=android-sdk-linux_x86-1.6_r1
-- ANDROID_HOME=/home/travis/build/$ANDROID_SDK_VER
-- CURRENT_PATH=/home/travis/build/ros2_java_ws
-- ROS2JAVA_PATH=$CURRENT_PATH/src/android-cmake/android-cmake/android.toolchain.cmake
-- PYTHON_PATH=/usr/bin/python3
-- ANDROID_NDK_VER=android-ndk-r12b
-- ANDROID_NDK=/home/travis/build/$ANDROID_NDK_VER
-- ANDROID_VER=android-21
-- ANDROID_GCC=arm-linux-androideabi-clang
-- ANDROID_ABI=armeabi-v7a
+  global:
+    - ANDROID_SDK_VER=android-sdk-linux_x86-1.6_r1
+    - ANDROID_HOME=/home/travis/build/$ANDROID_SDK_VER
+    - CURRENT_PATH=/home/travis/build/ros2_java_ws
+    - ROS2JAVA_PATH=$CURRENT_PATH/src/android-cmake/android-cmake/android.toolchain.cmake
+    - PYTHON_PATH=/usr/bin/python3
+    - ANDROID_NDK_VER=android-ndk-r12b
+    - ANDROID_NDK=/home/travis/build/$ANDROID_NDK_VER
+    - ANDROID_VER=android-21
+    - ANDROID_GCC=arm-linux-androideabi-clang
+    - ANDROID_ABI=armeabi-v7a
 
 before_install:
 - docker pull theosakamg7/ros2java:latest
