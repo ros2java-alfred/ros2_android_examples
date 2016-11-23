@@ -9,7 +9,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0+'
-        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:0.4.0"
+        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:0.4.3"
     }
 }
 
