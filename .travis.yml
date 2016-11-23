@@ -15,6 +15,7 @@ env:
     - ANDROID_VER=android-21
     - ANDROID_GCC=arm-linux-androideabi-clang
     - ANDROID_ABI=armeabi-v7a
+    - ANDROID_SDK_HOME=$HOME_BUILD
     - ROS2WS=$HOME_BUILD/ros2_java_ws
     - ROS2JAVA_PATH=$ROS2WS/src/android-cmake/android-cmake/android.toolchain.cmake
     - PYTHON_PATH=/usr/bin/python3
@@ -39,7 +40,7 @@ before_install:
 - docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c "/usr/bin/wget https://gist.githubusercontent.com/Theosakamg/617cd893813163cdcb9943a08d667964/raw/ros2_java_android.repos"
 - docker run -u "$UID" -it --rm -v `pwd`:`pwd` -w `pwd` theosakamg7/ros2java:latest sh -c "/usr/bin/vcs import src < ros2_java_android.repos"
 - cd $ROS2WS/src/ros2/rosidl_typesupport && patch -p1 < ../../ros2_java/ros2_java/rosidl_ros2_android.diff
-- mkdir -p ~/.android
+- mkdir -p $HOME_BUILD/.android
 - rm -rf $ROS2WS/src/ros2_java/ros2_android_examples && ln -s $HOME_BUILD/ros2java-alfred/ros2_android_examples $ROS2WS/src/ros2_java/ros2_android_examples
 - touch $ROS2WS/src/ros2/rosidl/python_cmake_module/AMENT_IGNORE && touch $ROS2WS/src/ros2/rosidl/rosidl_generator_py/AMENT_IGNORE
 - cd $ROS2WS/src/eProsima/Fast-RTPS && git submodule init && git submodule update
