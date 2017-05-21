@@ -9,7 +9,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0+'
-        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:0.4.3"
+        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:0.4.7"
     }
 }
 
@@ -19,7 +19,7 @@ apply plugin: 'org.ros2.rcljava'
 android {
     compileSdkVersion 22
     buildToolsVersion "23.0.3"
-                
+
     lintOptions {
         abortOnError false
     }

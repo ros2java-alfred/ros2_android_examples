@@ -15,22 +15,19 @@
 package org.ros2.examples.android.listener;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.widget.TextView;
-import android.os.AsyncTask;
-import android.text.method.ScrollingMovementMethod;
-
-import org.ros2.rcljava.node.topic.Consumer;
 import org.ros2.rcljava.RCLJava;
 import org.ros2.rcljava.node.Node;
+import org.ros2.rcljava.node.topic.SubscriptionCallback;
 import org.ros2.rcljava.node.topic.Subscription;
 
 public class ROS2ListenerActivity extends Activity
@@ -46,9 +43,9 @@ public class ROS2ListenerActivity extends Activity
             Node node = RCLJava.createNode("listener");
             Subscription<std_msgs.msg.String> chatter_sub = node.<std_msgs.msg.String>createSubscription(
                 std_msgs.msg.String.class, "chatter",
-                new Consumer<std_msgs.msg.String>() {
+                new SubscriptionCallback<std_msgs.msg.String>() {
                     @Override
-                    public void accept(std_msgs.msg.String msg) {
+                    public void dispatch(std_msgs.msg.String msg) {
                         publishProgress("I heard: " + msg.getData());
                     }
                 }
@@ -86,6 +83,7 @@ public class ROS2ListenerActivity extends Activity
 
         listenerView = (TextView)findViewById(R.id.listenerView);
         listenerView.setMovementMethod(new ScrollingMovementMethod());
+
         RCLJava.rclJavaInit();
     }
 
