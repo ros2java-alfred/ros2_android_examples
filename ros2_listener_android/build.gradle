@@ -1,26 +1,41 @@
 buildscript {
     repositories {
-        jcenter()
-        mavenLocal()
+        maven {
+            url 'https://maven.google.com'
+        }
+        maven {
+            url 'https://dl.google.com/dl/android/maven2/'
+        }
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+        jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0+'
-        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:0.4.7"
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha2'
+        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:0.4.10"
     }
 }
-
 apply plugin: 'com.android.application'
 apply plugin: 'org.ros2.rcljava'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "23.0.3"
-
+    buildToolsVersion '26.0.0 rc2'
     lintOptions {
         abortOnError false
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildTypes {
+        debug {
+            jniDebuggable true
+        }
+    }
+}
+
+dependencies {
 }
