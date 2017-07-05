@@ -14,6 +14,8 @@
  */
 package org.ros2.android.examples.talker;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,57 +23,58 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
-import android.os.AsyncTask;
-
-import org.ros2.android.core.RosActivity;
-import org.ros2.rcljava.RCLJava;
-import org.ros2.rcljava.node.Node;
+import org.ros2.android.core.BaseRosService;
+import org.ros2.android.core.node.AndroidNativeNode;
 import org.ros2.rcljava.node.topic.Publisher;
+import org.ros2.rcljava.time.WallTimer;
+import org.ros2.rcljava.time.WallTimerCallback;
 
-public class ROS2AndroidTalkerActivity extends RosActivity
-{
+import java.util.concurrent.TimeUnit;
 
-    private Talker talker;
+public class ROS2AndroidTalkerActivity extends Activity { // BaseRos
 
-    private class Talker extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... text) {
-            Node node = RCLJava.createNode("talker");
-            Publisher<std_msgs.msg.String> chatter_pub =
-                node.<std_msgs.msg.String>createPublisher(std_msgs.msg.String.class, "chatter");
+    private class TalkerNode extends AndroidNativeNode implements WallTimerCallback {
+        int i = 0;
+        private Publisher<std_msgs.msg.String> pub;
+        private WallTimer timer;
 
-            std_msgs.msg.String msg = new std_msgs.msg.String();
+        public TalkerNode(String name, Context ctx) {
+            super(name, ctx);
 
-            int i = 1;
+            this.pub = this.<std_msgs.msg.String>createPublisher(
+                    std_msgs.msg.String.class,
+                    "chatter");
 
-            while(!isCancelled()) {
-                msg.setData(text[0] + ": " + i);
-                i++;
-                chatter_pub.publish(msg);
-                try {
-                    Thread.sleep(1000);
-                }
-                catch(InterruptedException e)
-                {
-                    // this part is executed when an exception (in this example InterruptedException) occurs
-                }
-            }
-            return null;
-
+            this.timer = this.createWallTimer(500, TimeUnit.MILLISECONDS, this);
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        public void tick() {
+            std_msgs.msg.String msg = new std_msgs.msg.String();
+            msg.setData("Hello World: " + ++i);
+
+            System.out.println("Publishing: \"" + msg.getData() + "\"");
+            this.pub.publish(msg);
+        }
+
+        @Override
+        public void dispose() {
+            this.timer.dispose();
+            this.pub.dispose();
+            super.dispose();
         }
     }
 
     private static String logtag = "ROS2TalkerActivity";//for use as the tag when logging
 
+    private TalkerNode node;
+    private BaseRosService executor;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        this.setContentView(R.layout.main);
 
         Button buttonStart = (Button)findViewById(R.id.buttonStart);
         buttonStart.setOnClickListener(startListener); // Register the onClick listener with the implementation above
@@ -79,7 +82,9 @@ public class ROS2AndroidTalkerActivity extends RosActivity
         Button buttonStop = (Button)findViewById(R.id.buttonStop);
         buttonStop.setOnClickListener(stopListener); // Register the onClick listener with the implementation above
         buttonStop.setEnabled(false);
-        RCLJava.rclJavaInit();
+
+//        ROS2AndroidTalkerApplication app = (ROS2AndroidTalkerApplication)getApplication();
+//        executor = app.getRosService();
     }
 
     //Create an anonymous implementation of OnClickListener
@@ -88,12 +93,17 @@ public class ROS2AndroidTalkerActivity extends RosActivity
             Log.d(logtag,"onClick() called - start button");
             Toast.makeText(ROS2AndroidTalkerActivity.this, "The Start button was clicked.", Toast.LENGTH_LONG).show();
             Log.d(logtag,"onClick() ended - start button");
-            Button buttonStart = (Button)findViewById(R.id.buttonStart);
+            Button buttonStart = (Button)findViewById(R.id.buttonStart);super
             Button buttonStop = (Button)findViewById(R.id.buttonStop);
             buttonStart.setEnabled(false);
             buttonStop.setEnabled(true);
-            talker = new Talker();
-            talker.execute("Hello ROS2 from Android");
+
+            node = new TalkerNode("tessst", ROS2AndroidTalkerActivity.this);
+
+            ROS2AndroidTalkerApplication app = (ROS2AndroidTalkerApplication)getApplication();
+            executor = app.getRosService();
+            executor.addNode(node);
+
         }
     };
 
@@ -102,7 +112,9 @@ public class ROS2AndroidTalkerActivity extends RosActivity
         public void onClick(View v) {
             Log.d(logtag,"onClick() called - stop button");
             Toast.makeText(ROS2AndroidTalkerActivity.this, "The Stop button was clicked.", Toast.LENGTH_LONG).show();
-            talker.cancel(true);
+
+            executor.removeNode(node);
+
             Button buttonStart = (Button)findViewById(R.id.buttonStart);
             Button buttonStop = (Button)findViewById(R.id.buttonStop);
             buttonStart.setEnabled(true);
@@ -121,6 +133,7 @@ public class ROS2AndroidTalkerActivity extends RosActivity
     protected void onResume() {//activity was resumed and is visible again
         Log.d(logtag,"onResume() called");
         super.onResume();
+
 
     }
     @Override
