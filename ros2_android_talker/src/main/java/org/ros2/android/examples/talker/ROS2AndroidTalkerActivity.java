@@ -26,8 +26,8 @@ import org.ros2.android.core.BaseRosActivity;
 import org.ros2.android.core.BaseRosService;
 import org.ros2.android.core.node.AndroidNativeNode;
 import org.ros2.android.core.node.AndroidNode;
-import org.ros2.android.examples.hardware.sensor.AmbientTemperatureSensorNode;
 import org.ros2.android.examples.hardware.sensor.LightSensorNode;
+import org.ros2.android.examples.hardware.sensor.ProximitySensorNode;
 import org.ros2.rcljava.node.topic.Publisher;
 import org.ros2.rcljava.time.WallTimer;
 import org.ros2.rcljava.time.WallTimerCallback;
@@ -73,6 +73,8 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity {
     private AndroidNode node;
     private AndroidNode nodeLight;
     private AndroidNode nodeTemp;
+    private AndroidNode nodeProximity;
+
     private BaseRosService executor;
 
     /** Called when the activity is first created. */
@@ -106,13 +108,15 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity {
             if (node == null) {
                 node = new TalkerNode(ROS2AndroidTalkerActivity.this, "tessst");
                 nodeLight = new LightSensorNode(ROS2AndroidTalkerActivity.this, "light_node", 500, TimeUnit.MILLISECONDS);
-                nodeTemp = new AmbientTemperatureSensorNode(ROS2AndroidTalkerActivity.this, "temp_node", 2, TimeUnit.SECONDS);
+//                nodeTemp = new AmbientTemperatureSensorNode(ROS2AndroidTalkerActivity.this, "temp_node", 2, TimeUnit.SECONDS);
+                nodeProximity = new ProximitySensorNode(ROS2AndroidTalkerActivity.this, "proximity_node", 100, TimeUnit.MILLISECONDS);
 
                 ROS2AndroidTalkerApplication app = (ROS2AndroidTalkerApplication) getApplication();
                 executor = app.getRosService();
                 executor.addNode(node);
                 executor.addNode(nodeLight);
-                executor.addNode(nodeTemp);
+//                executor.addNode(nodeTemp);
+                executor.addNode(nodeProximity);
             }
         }
     };
@@ -125,7 +129,8 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity {
 
             executor.removeNode(node);
             executor.removeNode(nodeLight);
-            executor.removeNode(nodeTemp);
+//            executor.removeNode(nodeTemp);
+            executor.removeNode(nodeProximity);
 
             Button buttonStart = (Button)findViewById(R.id.buttonStart);
             Button buttonStop = (Button)findViewById(R.id.buttonStop);

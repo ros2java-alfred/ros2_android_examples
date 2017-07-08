@@ -23,6 +23,7 @@ import org.ros2.android.hardware.sensor.LightSensorAdapter;
 import java.util.concurrent.TimeUnit;
 
 import std_msgs.msg.Float32;
+//import sensor_msgs.msg.Illuminance; //TODO To Enable
 
 public final class LightSensorNode extends AbstractSensorNode<Float32> {
 
