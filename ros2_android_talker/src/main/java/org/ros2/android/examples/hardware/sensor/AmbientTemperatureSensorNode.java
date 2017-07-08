@@ -12,14 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ros2.android.examples.talker;
+package org.ros2.android.examples.hardware.sensor;
 
 import android.content.Context;
 import android.hardware.Sensor;
 import android.os.Build;
 
-import org.ros2.android.hardware.AbstractSensorNode;
-import org.ros2.android.hardware.AmbientTemperatureSensorAdapter;
+import org.ros2.android.hardware.sensor.AbstractSensorNode;
+import org.ros2.android.hardware.sensor.AmbientTemperatureSensorAdapter;
 
 import java.util.concurrent.TimeUnit;
 

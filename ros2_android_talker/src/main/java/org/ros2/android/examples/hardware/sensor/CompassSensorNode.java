@@ -12,27 +12,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ros2.android.examples.talker;
+package org.ros2.android.examples.hardware.sensor;
 
 import android.content.Context;
 import android.hardware.Sensor;
 
-import org.ros2.android.hardware.AbstractSensorNode;
-import org.ros2.android.hardware.LightSensorAdapter;
+import org.ros2.android.hardware.sensor.AbstractSensorNode;
+import org.ros2.android.hardware.sensor.CompassSensorAdapter;
 
 import java.util.concurrent.TimeUnit;
 
 import std_msgs.msg.Float32;
 
-public final class LightSensorNode extends AbstractSensorNode<Float32> {
+//import sensor_msgs.msg.Imu; //TODO To Enable
 
-//    private static final String TAG = "LightSensorNode";
-//    private static final Logger logger = LoggerFactory.getLogger(LightSensorNode.class);
+public class CompassSensorNode extends AbstractSensorNode<Float32> {
 
-    public LightSensorNode(Context context, String name, long time, TimeUnit timeUnit) {
-        super(context, name, Sensor.TYPE_LIGHT, time, timeUnit);
+//    private static final String TAG = "CompassSensorNode";
+//    private static final Logger logger = LoggerFactory.getLogger(CompassSensorNode.class);
+
+    public CompassSensorNode(Context context, String name, long time, TimeUnit timeUnit) {
+        super(context, name, Sensor.TYPE_MAGNETIC_FIELD, time, timeUnit);
 
         // Set Adapter of Android Sensor to ROS2 node.
-        this.sensorAdapter = new LightSensorAdapter(this, new Float32(), "light");
+        this.sensorAdapter = new CompassSensorAdapter(this, new Float32(), "magnet");
     }
 }

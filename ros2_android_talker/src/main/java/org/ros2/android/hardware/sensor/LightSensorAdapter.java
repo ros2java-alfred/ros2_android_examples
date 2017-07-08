@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ros2.android.hardware;
+package org.ros2.android.hardware.sensor;
 
+import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 
 import org.ros2.android.core.node.AndroidNode;
@@ -40,10 +41,12 @@ public final class LightSensorAdapter extends AbstractSensorAdapter<Float32> {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        synchronized (this.mutex) {
-            this.lux = sensorEvent.values[0];
-            logger.debug("Sensor light value : " + this.lux);
-            System.out.println("Sensor light value : " + this.lux);
+        if(sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
+            synchronized (this.mutex) {
+                this.lux = sensorEvent.values[0];
+                logger.debug("Sensor light value : " + this.lux);
+                System.out.println("Sensor light value : " + this.lux);
+            }
         }
     }
 }

@@ -26,6 +26,8 @@ import org.ros2.android.core.BaseRosActivity;
 import org.ros2.android.core.BaseRosService;
 import org.ros2.android.core.node.AndroidNativeNode;
 import org.ros2.android.core.node.AndroidNode;
+import org.ros2.android.examples.hardware.sensor.AmbientTemperatureSensorNode;
+import org.ros2.android.examples.hardware.sensor.LightSensorNode;
 import org.ros2.rcljava.node.topic.Publisher;
 import org.ros2.rcljava.time.WallTimer;
 import org.ros2.rcljava.time.WallTimerCallback;

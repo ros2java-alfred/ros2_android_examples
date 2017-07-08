@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ros2.android.hardware;
+package org.ros2.android.hardware.sensor;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -21,7 +21,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import org.ros2.android.core.node.AndroidNativeNode;
-import org.ros2.android.examples.talker.LightSensorNode;
+import org.ros2.android.examples.hardware.sensor.LightSensorNode;
 
 import org.ros2.rcljava.internal.message.Message;
 import org.ros2.rcljava.time.WallTimer;

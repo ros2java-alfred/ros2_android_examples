@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ros2.android.hardware;
+package org.ros2.android.hardware.sensor;
 
 import org.ros2.android.core.node.AndroidNode;
 import org.ros2.rcljava.internal.message.Message;
@@ -37,9 +37,11 @@ public abstract class AbstractSensorAdapter<T extends Message> implements Sensor
         this.topicName = topicName;
 
         this.msg = message;
-        this.pub = this.node.<T>createPublisher(
-                (Class<T>)this.msg.getClass(),
-                this.topicName);
+        if (this.topicName != null) {
+            this.pub = this.node.<T>createPublisher(
+                    (Class<T>) this.msg.getClass(),
+                    this.topicName);
+        }
     }
 
     public AndroidNode getNode() {

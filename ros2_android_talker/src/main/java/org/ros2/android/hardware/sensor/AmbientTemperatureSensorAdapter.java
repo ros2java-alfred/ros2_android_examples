@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ros2.android.hardware;
+package org.ros2.android.hardware.sensor;
 
+import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 
 import org.ros2.android.core.node.AndroidNode;
@@ -40,10 +41,12 @@ public class AmbientTemperatureSensorAdapter extends AbstractSensorAdapter<Float
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        synchronized (this.mutex) {
-            this.temperature = sensorEvent.values[0];
-            logger.debug("Sensor ambient temperature value : " + this.temperature);
-            System.out.println("Sensor ambient temperature value : " + this.temperature);
+        if(sensorEvent.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
+            synchronized (this.mutex) {
+                this.temperature = sensorEvent.values[0];
+                logger.debug("Sensor ambient temperature value : " + this.temperature);
+                System.out.println("Sensor ambient temperature value : " + this.temperature);
+            }
         }
     }
 }

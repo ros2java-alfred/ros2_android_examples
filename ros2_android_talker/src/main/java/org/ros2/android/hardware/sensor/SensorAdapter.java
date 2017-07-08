@@ -12,13 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ros2.android.hardware;
+package org.ros2.android.hardware.sensor;
 
 import android.hardware.SensorEvent;
 
 import org.ros2.rcljava.internal.message.Message;
 
-interface SensorAdapter<T extends Message> {
+public interface SensorAdapter<T extends Message> {
     void publishSensorState();
 
     void onSensorChanged(SensorEvent sensorEvent);
