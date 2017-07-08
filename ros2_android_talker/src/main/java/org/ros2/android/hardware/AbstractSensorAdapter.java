@@ -47,7 +47,7 @@ public abstract class AbstractSensorAdapter<T extends Message> implements Sensor
     }
 
     @Override
-    public T getMessage() {
+    public synchronized T getMessage() {
         return this.msg;
     }
 }

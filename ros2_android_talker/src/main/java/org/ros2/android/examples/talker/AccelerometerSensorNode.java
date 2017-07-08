@@ -34,6 +34,6 @@ public class AccelerometerSensorNode extends AbstractSensorNode<Imu> {
         super(context, name, Sensor.TYPE_ACCELEROMETER, time, timeUnit);
 
         // Set Adapter of Android Sensor to ROS2 node.
-        this.sensorAdapter = new AccelerometerSensorAdapter(this, new Imu(), "light");
+        this.sensorAdapter = new AccelerometerSensorAdapter(this, new Imu(), "accel");
     }
 }

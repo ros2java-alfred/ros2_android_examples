@@ -35,7 +35,8 @@ public class AccelerometerSensorAdapter extends AbstractSensorAdapter<Imu> {
     @Override
     public void publishSensorState() {
         synchronized (this.mutex) {
-            this.msg = this.imu;
+            this.msg.setLinearAcceleration(this.imu.getLinearAcceleration());
+            this.msg.setLinearAccelerationCovariance(this.imu.getLinearAccelerationCovariance());
 //            logger.debug("Publish light value : " + this.lux);
 //            System.out.println("Publish light value : " + this.lux);
         }
