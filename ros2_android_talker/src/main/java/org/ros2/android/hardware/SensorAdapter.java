@@ -12,14 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ros2.android.examples.talker;
+package org.ros2.android.hardware;
 
-import org.ros2.android.core.BaseRosApplication;
+import android.hardware.SensorEvent;
 
-public class ROS2AndroidTalkerApplication extends BaseRosApplication {
+import org.ros2.rcljava.internal.message.Message;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
+interface SensorAdapter<T extends Message> {
+    void publishSensorState();
+
+    void onSensorChanged(SensorEvent sensorEvent);
+
+    T getMessage();
 }

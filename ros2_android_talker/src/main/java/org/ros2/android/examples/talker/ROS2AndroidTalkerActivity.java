@@ -14,7 +14,6 @@
  */
 package org.ros2.android.examples.talker;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,22 +22,24 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.ros2.android.core.BaseRosActivity;
 import org.ros2.android.core.BaseRosService;
 import org.ros2.android.core.node.AndroidNativeNode;
+import org.ros2.android.core.node.AndroidNode;
 import org.ros2.rcljava.node.topic.Publisher;
 import org.ros2.rcljava.time.WallTimer;
 import org.ros2.rcljava.time.WallTimerCallback;
 
 import java.util.concurrent.TimeUnit;
 
-public class ROS2AndroidTalkerActivity extends Activity { // BaseRos
+public class ROS2AndroidTalkerActivity extends BaseRosActivity {
 
     private class TalkerNode extends AndroidNativeNode implements WallTimerCallback {
         int i = 0;
         private Publisher<std_msgs.msg.String> pub;
         private WallTimer timer;
 
-        public TalkerNode(String name, Context ctx) {
+        public TalkerNode(Context ctx, String name) {
             super(name, ctx);
 
             this.pub = this.<std_msgs.msg.String>createPublisher(
@@ -67,7 +68,9 @@ public class ROS2AndroidTalkerActivity extends Activity { // BaseRos
 
     private static String logtag = "ROS2TalkerActivity";//for use as the tag when logging
 
-    private TalkerNode node;
+    private AndroidNode node;
+    private AndroidNode nodeLight;
+    private AndroidNode nodeTemp;
     private BaseRosService executor;
 
     /** Called when the activity is first created. */
@@ -93,17 +96,22 @@ public class ROS2AndroidTalkerActivity extends Activity { // BaseRos
             Log.d(logtag,"onClick() called - start button");
             Toast.makeText(ROS2AndroidTalkerActivity.this, "The Start button was clicked.", Toast.LENGTH_LONG).show();
             Log.d(logtag,"onClick() ended - start button");
-            Button buttonStart = (Button)findViewById(R.id.buttonStart);super
+            Button buttonStart = (Button)findViewById(R.id.buttonStart);
             Button buttonStop = (Button)findViewById(R.id.buttonStop);
             buttonStart.setEnabled(false);
             buttonStop.setEnabled(true);
 
-            node = new TalkerNode("tessst", ROS2AndroidTalkerActivity.this);
+            if (node == null) {
+                node = new TalkerNode(ROS2AndroidTalkerActivity.this, "tessst");
+                nodeLight = new LightSensorNode(ROS2AndroidTalkerActivity.this, "light_node", 500, TimeUnit.MILLISECONDS);
+                nodeTemp = new AmbientTemperatureSensorNode(ROS2AndroidTalkerActivity.this, "temp_node", 2, TimeUnit.SECONDS);
 
-            ROS2AndroidTalkerApplication app = (ROS2AndroidTalkerApplication)getApplication();
-            executor = app.getRosService();
-            executor.addNode(node);
-
+                ROS2AndroidTalkerApplication app = (ROS2AndroidTalkerApplication) getApplication();
+                executor = app.getRosService();
+                executor.addNode(node);
+                executor.addNode(nodeLight);
+                executor.addNode(nodeTemp);
+            }
         }
     };
 
@@ -114,6 +122,8 @@ public class ROS2AndroidTalkerActivity extends Activity { // BaseRos
             Toast.makeText(ROS2AndroidTalkerActivity.this, "The Stop button was clicked.", Toast.LENGTH_LONG).show();
 
             executor.removeNode(node);
+            executor.removeNode(nodeLight);
+            executor.removeNode(nodeTemp);
 
             Button buttonStart = (Button)findViewById(R.id.buttonStart);
             Button buttonStop = (Button)findViewById(R.id.buttonStop);

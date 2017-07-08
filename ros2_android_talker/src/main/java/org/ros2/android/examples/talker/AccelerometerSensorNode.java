@@ -14,12 +14,26 @@
  */
 package org.ros2.android.examples.talker;
 
-import org.ros2.android.core.BaseRosApplication;
+import android.content.Context;
+import android.hardware.Sensor;
 
-public class ROS2AndroidTalkerApplication extends BaseRosApplication {
+import org.ros2.android.hardware.AbstractSensorNode;
+import org.ros2.android.hardware.AccelerometerSensorAdapter;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+import java.util.concurrent.TimeUnit;
+
+import sensor_msgs.msg.Imu;
+
+/**
+ * Created by micky on 7/8/17.
+ */
+
+public class AccelerometerSensorNode extends AbstractSensorNode<Imu> {
+
+    public AccelerometerSensorNode(Context context, String name, long time, TimeUnit timeUnit) {
+        super(context, name, Sensor.TYPE_ACCELEROMETER, time, timeUnit);
+
+        // Set Adapter of Android Sensor to ROS2 node.
+        this.sensorAdapter = new AccelerometerSensorAdapter(this, new Imu(), "light");
     }
 }
