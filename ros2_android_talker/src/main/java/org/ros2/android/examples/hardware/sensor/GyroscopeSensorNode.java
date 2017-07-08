@@ -22,11 +22,9 @@ import org.ros2.android.hardware.sensor.AccelerometerSensorAdapter;
 
 import java.util.concurrent.TimeUnit;
 
-import std_msgs.msg.Float32;
+import sensor_msgs.msg.Imu;
 
-//import sensor_msgs.msg.Imu; //TODO To Enable
-
-public class GyroscopeSensorNode extends AbstractSensorNode<Float32> {
+public class GyroscopeSensorNode extends AbstractSensorNode<Imu> {
 
 //    private static final String TAG = "GyroscopeSensorNode";
 //    private static final Logger logger = LoggerFactory.getLogger(GyroscopeSensorNode.class);
@@ -35,6 +33,6 @@ public class GyroscopeSensorNode extends AbstractSensorNode<Float32> {
         super(context, name, Sensor.TYPE_GYROSCOPE, time, timeUnit);
 
         // Set Adapter of Android Sensor to ROS2 node.
-        this.sensorAdapter = new AccelerometerSensorAdapter(this, new Float32(), "gyro");
+        this.sensorAdapter = new AccelerometerSensorAdapter(this, new Imu(), "gyro");
     }
 }

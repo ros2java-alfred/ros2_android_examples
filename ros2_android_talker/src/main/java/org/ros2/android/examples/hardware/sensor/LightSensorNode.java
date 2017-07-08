@@ -22,10 +22,9 @@ import org.ros2.android.hardware.sensor.LightSensorAdapter;
 
 import java.util.concurrent.TimeUnit;
 
-import std_msgs.msg.Float32;
-//import sensor_msgs.msg.Illuminance; //TODO To Enable
+import sensor_msgs.msg.Illuminance;
 
-public final class LightSensorNode extends AbstractSensorNode<Float32> {
+public final class LightSensorNode extends AbstractSensorNode<Illuminance> {
 
 //    private static final String TAG = "LightSensorNode";
 //    private static final Logger logger = LoggerFactory.getLogger(LightSensorNode.class);
@@ -34,6 +33,6 @@ public final class LightSensorNode extends AbstractSensorNode<Float32> {
         super(context, name, Sensor.TYPE_LIGHT, time, timeUnit);
 
         // Set Adapter of Android Sensor to ROS2 node.
-        this.sensorAdapter = new LightSensorAdapter(this, new Float32(), "light");
+        this.sensorAdapter = new LightSensorAdapter(this, new Illuminance(), "light");
     }
 }

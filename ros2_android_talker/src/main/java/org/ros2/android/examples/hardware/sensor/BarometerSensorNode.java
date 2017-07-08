@@ -22,9 +22,9 @@ import org.ros2.android.hardware.sensor.BarometerSensorAdapter;
 
 import java.util.concurrent.TimeUnit;
 
-import std_msgs.msg.Float32;
+import sensor_msgs.msg.FluidPressure;
 
-public class BarometerSensorNode extends AbstractSensorNode<Float32> {
+public class BarometerSensorNode extends AbstractSensorNode<FluidPressure> {
 
 //    private static final String TAG = "BarometerSensorNode";
 //    private static final Logger logger = LoggerFactory.getLogger(BarometerSensorNode.class);
@@ -33,6 +33,6 @@ public class BarometerSensorNode extends AbstractSensorNode<Float32> {
         super(context, name, Sensor.TYPE_PRESSURE, time, timeUnit);
 
         // Set Adapter of Android Sensor to ROS2 node.
-        this.sensorAdapter = new BarometerSensorAdapter(this, new Float32(), "pressure");
+        this.sensorAdapter = new BarometerSensorAdapter(this, new FluidPressure(), "pressure");
     }
 }

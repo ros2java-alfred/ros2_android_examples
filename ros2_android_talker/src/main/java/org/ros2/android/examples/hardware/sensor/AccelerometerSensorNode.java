@@ -18,15 +18,12 @@ import android.content.Context;
 import android.hardware.Sensor;
 
 import org.ros2.android.hardware.sensor.AbstractSensorNode;
-import org.ros2.android.hardware.sensor.AccelerometerSensorAdapter;
 
 import java.util.concurrent.TimeUnit;
 
-import std_msgs.msg.Float32;
+import sensor_msgs.msg.Imu;
 
-//import sensor_msgs.msg.Imu; //TODO To Enable
-
-public class AccelerometerSensorNode extends AbstractSensorNode<Float32> {
+public class AccelerometerSensorNode extends AbstractSensorNode<Imu> {
 
 //    private static final String TAG = "AccelerometerSensorNode";
 //    private static final Logger logger = LoggerFactory.getLogger(AccelerometerSensorNode.class);
@@ -35,6 +32,6 @@ public class AccelerometerSensorNode extends AbstractSensorNode<Float32> {
         super(context, name, Sensor.TYPE_ACCELEROMETER, time, timeUnit);
 
         // Set Adapter of Android Sensor to ROS2 node.
-        this.sensorAdapter = new AccelerometerSensorAdapter(this, new Float32(), "accel");
+        //this.sensorAdapter = new AccelerometerSensorAdapter(this, new Float32(), "accel");
     }
 }

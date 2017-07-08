@@ -22,11 +22,9 @@ import org.ros2.android.hardware.sensor.CompassSensorAdapter;
 
 import java.util.concurrent.TimeUnit;
 
-import std_msgs.msg.Float32;
+import sensor_msgs.msg.MagneticField;
 
-//import sensor_msgs.msg.Imu; //TODO To Enable
-
-public class CompassSensorNode extends AbstractSensorNode<Float32> {
+public class CompassSensorNode extends AbstractSensorNode<MagneticField> {
 
 //    private static final String TAG = "CompassSensorNode";
 //    private static final Logger logger = LoggerFactory.getLogger(CompassSensorNode.class);
@@ -35,6 +33,6 @@ public class CompassSensorNode extends AbstractSensorNode<Float32> {
         super(context, name, Sensor.TYPE_MAGNETIC_FIELD, time, timeUnit);
 
         // Set Adapter of Android Sensor to ROS2 node.
-        this.sensorAdapter = new CompassSensorAdapter(this, new Float32(), "magnet");
+        this.sensorAdapter = new CompassSensorAdapter(this, new MagneticField(), "magnet");
     }
 }
