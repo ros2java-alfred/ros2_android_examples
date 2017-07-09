@@ -12,28 +12,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ros2.android.examples.talker;
+package org.ros2.android.examples.hardware.sensor;
 
 import android.content.Context;
 import android.hardware.Sensor;
 
-import org.ros2.android.hardware.AbstractSensorNode;
-import org.ros2.android.hardware.AccelerometerSensorAdapter;
+import org.ros2.android.hardware.sensor.AbstractSensorNode;
 
 import java.util.concurrent.TimeUnit;
 
 import sensor_msgs.msg.Imu;
 
-/**
- * Created by micky on 7/8/17.
- */
-
 public class AccelerometerSensorNode extends AbstractSensorNode<Imu> {
+
+//    private static final String TAG = "AccelerometerSensorNode";
+//    private static final Logger logger = LoggerFactory.getLogger(AccelerometerSensorNode.class);
 
     public AccelerometerSensorNode(Context context, String name, long time, TimeUnit timeUnit) {
         super(context, name, Sensor.TYPE_ACCELEROMETER, time, timeUnit);
 
         // Set Adapter of Android Sensor to ROS2 node.
-        this.sensorAdapter = new AccelerometerSensorAdapter(this, new Imu(), "light");
+        //this.sensorAdapter = new AccelerometerSensorAdapter(this, new Float32(), "accel");
     }
 }
