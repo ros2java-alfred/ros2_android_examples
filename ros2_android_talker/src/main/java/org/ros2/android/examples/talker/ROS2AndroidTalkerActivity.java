@@ -26,6 +26,7 @@ import org.ros2.android.core.BaseRosActivity;
 import org.ros2.android.core.BaseRosService;
 import org.ros2.android.core.node.AndroidNativeNode;
 import org.ros2.android.core.node.AndroidNode;
+import org.ros2.android.examples.hardware.sensor.BarometerSensorNode;
 import org.ros2.android.examples.hardware.sensor.LightSensorNode;
 import org.ros2.android.examples.hardware.sensor.ProximitySensorNode;
 import org.ros2.rcljava.node.topic.Publisher;
@@ -34,17 +35,17 @@ import org.ros2.rcljava.time.WallTimerCallback;
 
 import java.util.concurrent.TimeUnit;
 
-public class ROS2AndroidTalkerActivity extends BaseRosActivity {
+public class ROS2AndroidTalkerActivity extends BaseRosActivity implements OnClickListener {
 
     private class TalkerNode extends AndroidNativeNode implements WallTimerCallback {
         int i = 0;
         private Publisher<std_msgs.msg.String> pub;
         private WallTimer timer;
 
-        public TalkerNode(Context ctx, String name) {
+        TalkerNode(Context ctx, String name) {
             super(name, ctx);
 
-            this.pub = this.<std_msgs.msg.String>createPublisher(
+            this.pub = this.createPublisher(
                     std_msgs.msg.String.class,
                     "chatter");
 
@@ -68,14 +69,23 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity {
         }
     }
 
-    private static String logtag = "ROS2TalkerActivity";//for use as the tag when logging
+    private static String logtag = "ROS2TalkerActivity";    //for use as the tag when logging
+
+    private AndroidNode nodeAccelerometer = null;  // Disable bug covariance.
+    private AndroidNode nodeTemp = null;           // Disable android phone.
+    private AndroidNode nodeBarometer = null;
+    private AndroidNode nodeCompass = null;        // Disable bug covariance.
+    private AndroidNode nodeGyroscope = null;      // Disable bug covariance.
+    private AndroidNode nodeImu = null;            // Disable bug covariance.
+    private AndroidNode nodeLight = null;
+    private AndroidNode nodeProximity = null;
 
     private AndroidNode node;
-    private AndroidNode nodeLight;
-    private AndroidNode nodeTemp;
-    private AndroidNode nodeProximity;
 
     private BaseRosService executor;
+
+    private Button buttonStart;
+    private Button buttonStop;
 
     /** Called when the activity is first created. */
     @Override
@@ -83,61 +93,85 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.main);
 
-        Button buttonStart = (Button)findViewById(R.id.buttonStart);
-        buttonStart.setOnClickListener(startListener); // Register the onClick listener with the implementation above
+        this.buttonStart = (Button)findViewById(R.id.buttonStart);
+        this.buttonStart.setOnClickListener(this); // Register the onClick listener with the implementation above
 
-        Button buttonStop = (Button)findViewById(R.id.buttonStop);
-        buttonStop.setOnClickListener(stopListener); // Register the onClick listener with the implementation above
-        buttonStop.setEnabled(false);
+        this.buttonStop = (Button)findViewById(R.id.buttonStop);
+        this.buttonStop.setOnClickListener(this); // Register the onClick listener with the implementation above
+        this.buttonStop.setEnabled(false);
 
 //        ROS2AndroidTalkerApplication app = (ROS2AndroidTalkerApplication)getApplication();
 //        executor = app.getRosService();
     }
 
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.buttonStart:
+                this.startListener();
+                break;
+            case R.id.buttonStop:
+                this.stopListener();
+                break;
+        }
+
+    }
+
     //Create an anonymous implementation of OnClickListener
-    private OnClickListener startListener = new OnClickListener() {
-        public void onClick(View v) {
-            Log.d(logtag,"onClick() called - start button");
-            Toast.makeText(ROS2AndroidTalkerActivity.this, "The Start button was clicked.", Toast.LENGTH_LONG).show();
-            Log.d(logtag,"onClick() ended - start button");
-            Button buttonStart = (Button)findViewById(R.id.buttonStart);
-            Button buttonStop = (Button)findViewById(R.id.buttonStop);
-            buttonStart.setEnabled(false);
-            buttonStop.setEnabled(true);
+    private void startListener() {
+        Log.d(logtag,"onClick() called - start button");
+        Toast.makeText(this, "The Start button was clicked.", Toast.LENGTH_LONG).show();
+        Log.d(logtag,"onClick() ended - start button");
 
-            if (node == null) {
-                node = new TalkerNode(ROS2AndroidTalkerActivity.this, "tessst");
-                nodeLight = new LightSensorNode(ROS2AndroidTalkerActivity.this, "light_node", 500, TimeUnit.MILLISECONDS);
-//                nodeTemp = new AmbientTemperatureSensorNode(ROS2AndroidTalkerActivity.this, "temp_node", 2, TimeUnit.SECONDS);
-                nodeProximity = new ProximitySensorNode(ROS2AndroidTalkerActivity.this, "proximity_node", 100, TimeUnit.MILLISECONDS);
+        buttonStart.setEnabled(false);
+        buttonStop.setEnabled(true);
 
-                ROS2AndroidTalkerApplication app = (ROS2AndroidTalkerApplication) getApplication();
-                executor = app.getRosService();
-                executor.addNode(node);
-                executor.addNode(nodeLight);
-//                executor.addNode(nodeTemp);
-                executor.addNode(nodeProximity);
-            }
+        if (node == null) {
+            node = new TalkerNode(this, "tessst");
+
+//                nodeAccelrometer    = new AccelerometerSensorNode(this, "accel_node", 100, TimeUnit.NANOSECONDS);
+//                nodeTemp            = new AmbientTemperatureSensorNode(this, "temp_node", 2, TimeUnit.SECONDS); // Disable android phone.
+            nodeBarometer       = new BarometerSensorNode(this,"pressure_node", 1, TimeUnit.SECONDS);
+//                nodeCompass         = new CompassSensorNode(this, "compass_node", 500, TimeUnit.NANOSECONDS);
+//                nodeGyroscope       = new GyroscopeSensorNode(this, "gyro_node", 100, TimeUnit.NANOSECONDS);
+//                nodeImu             = new ImuSensorNode(this, "imu_node", 100, TimeUnit.NANOSECONDS);
+            nodeLight           = new LightSensorNode(this, "light_node", 500, TimeUnit.MILLISECONDS);
+            nodeProximity       = new ProximitySensorNode(this, "proximity_node", 100, TimeUnit.MILLISECONDS);
+
+            ROS2AndroidTalkerApplication app = (ROS2AndroidTalkerApplication) getApplication();
+            executor = app.getRosService();
+            executor.addNode(node);
+
+            if (nodeAccelerometer != null)  { executor.addNode(nodeAccelerometer); }
+            if (nodeTemp != null)           { executor.addNode(nodeTemp); }
+            if (nodeBarometer != null)      { executor.addNode(nodeBarometer); }
+            if (nodeCompass != null)        { executor.addNode(nodeCompass); }
+            if (nodeGyroscope != null)      { executor.addNode(nodeGyroscope); }
+            if (nodeImu != null)            { executor.addNode(nodeImu); }
+            if (nodeLight != null)          { executor.addNode(nodeLight); }
+            if (nodeProximity != null)      { executor.addNode(nodeProximity); }
         }
     };
 
     // Create an anonymous implementation of OnClickListener
-    private OnClickListener stopListener = new OnClickListener() {
-        public void onClick(View v) {
-            Log.d(logtag,"onClick() called - stop button");
-            Toast.makeText(ROS2AndroidTalkerActivity.this, "The Stop button was clicked.", Toast.LENGTH_LONG).show();
+    private void stopListener() {
+        Log.d(logtag,"onClick() called - stop button");
+        Toast.makeText(this, "The Stop button was clicked.", Toast.LENGTH_LONG).show();
 
-            executor.removeNode(node);
-            executor.removeNode(nodeLight);
-//            executor.removeNode(nodeTemp);
-            executor.removeNode(nodeProximity);
+        buttonStart.setEnabled(true);
+        buttonStop.setEnabled(false);
 
-            Button buttonStart = (Button)findViewById(R.id.buttonStart);
-            Button buttonStop = (Button)findViewById(R.id.buttonStop);
-            buttonStart.setEnabled(true);
-            buttonStop.setEnabled(false);
-            Log.d(logtag,"onClick() ended - stop button");
-        }
+        if (node != null)               { executor.removeNode(node); }
+
+        if (nodeAccelerometer != null)  { executor.removeNode(nodeAccelerometer); }
+        if (nodeTemp != null)           { executor.removeNode(nodeTemp); }
+        if (nodeBarometer != null)      { executor.removeNode(nodeBarometer); }
+        if (nodeCompass != null)        { executor.removeNode(nodeCompass); }
+        if (nodeGyroscope != null)      { executor.removeNode(nodeGyroscope); }
+        if (nodeImu != null)            { executor.removeNode(nodeImu); }
+        if (nodeLight != null)          { executor.removeNode(nodeLight); }
+        if (nodeProximity != null)      { executor.removeNode(nodeProximity); }
+
+        Log.d(logtag,"onClick() ended - stop button");
     };
 
 

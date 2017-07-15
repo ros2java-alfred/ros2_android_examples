@@ -18,8 +18,4 @@ import org.ros2.android.core.BaseRosApplication;
 
 public class ROS2AndroidTalkerApplication extends BaseRosApplication {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
 }
