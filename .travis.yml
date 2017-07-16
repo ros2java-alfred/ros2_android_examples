@@ -10,7 +10,7 @@ env:
     - HOME_BUILD=$HOME/build
     - HOME_ENV=$HOME/.env
     - ANDROID_SDK_VER=sdk-tools-linux-3859397
-    - ANDROID_NDK_VER=android-ndk-r14b
+    - ANDROID_NDK_VER=android-ndk-r15b
     - ANDROID_HOME=$HOME_BUILD/$ANDROID_SDK_VER
     - ANDROID_NDK=$HOME_BUILD/$ANDROID_NDK_VER
     - ANDROID_VER=android-25
@@ -57,8 +57,6 @@ before_install:
 - echo "BUILD ROS2 WS..."
 - cd $HOME_BUILD && ls -lFa ./ && find . -maxdepth 3 -type d -not \( -path "./.git" -prune \)
 - cd $HOME_BUILD && docker run -u "0" -it --rm -v `pwd`:`pwd` --env-file $HOME_ENV -w `pwd` theosakamg7/ros2java:latest sh -c ". ./ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && ament build --isolated --cmake-args -DPYTHON_EXECUTABLE=$PYTHON_PATH -DEPROSIMA_BUILD=ON -DCMAKE_FIND_ROOT_PATH=$ROOT_PATH -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_TOOLCHAIN_NAME=$ANDROID_GCC -DANDROID_STL=gnustl_shared -DANDROID_ABI=$ANDROID_ABI -DANDROID_NDK=$ANDROID_NDK -DANDROID_NATIVE_API_LEVEL=$ANDROID_VER -DCMAKE_TOOLCHAIN_FILE=$ROS2JAVA_PATH -DANDROID_HOME=$ANDROID_HOME -- --ament-cmake-args -DPYTHON_EXECUTABLE=$PYTHON_PATH -DEPROSIMA_BUILD=ON -DCMAKE_FIND_ROOT_PATH=$ROOT_PATH -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_TOOLCHAIN_NAME=$ANDROID_GCC -DANDROID_STL=gnustl_shared -DANDROID_ABI=$ANDROID_ABI -DANDROID_NDK=$ANDROID_NDK -DANDROID_NATIVE_API_LEVEL=$ANDROID_VER -DCMAKE_TOOLCHAIN_FILE=$ROS2JAVA_PATH -DANDROID_HOME=$ANDROID_HOME -- --ament-gradle-args -Pament.android_stl=gnustl_shared -Pament.android_abi=$ANDROID_ABI -Pament.android_ndk=$ANDROID_NDK --"
-
-
 
 script:
 - cd $HOME_BUILD && docker run -u "$UID" -it --rm -v `pwd`:`pwd` --env-file $HOME_ENV -w `pwd` theosakamg7/ros2java:latest sh -c ". ament_ws/install_isolated/local_setup.sh && cd $ROS2WS #&& ament test --isolated --only rcljava"
