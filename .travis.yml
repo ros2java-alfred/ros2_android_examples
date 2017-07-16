@@ -33,8 +33,8 @@ cache:
 before_install:
 - echo "INSTALL ANDROID SDK & NDK..."
 - cd $HOME_BUILD && env | grep -E '^TRAVIS_' > $HOME_ENV && env | grep -E '^ANDROID_' >> $HOME_ENV && env | grep -E '^CI_' >> $HOME_ENV && echo -e "CI_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER\nCI_PULL_REQUEST=$TRAVIS_PULL_REQUEST\nCI_BRANCH=$TRAVIS_BRANCH\nCI_BUILD_URL=$" >> $HOME_ENV
-- if [ ! -d "$ANDROID_NDK/platforms" ]; then cd $HOME_BUILD && wget https://dl.google.com/android/repository/$ANDROID_NDK_VER-linux-x86_64.zip && unzip -q -o $ANDROID_NDK_VER-linux-x86_64.zip -d ./ &>/dev/null; fi && ls -lFa ./
-- if [ ! -d "$ANDROID_HOME/tools" ]; then cd $HOME_BUILD && wget https://dl.google.com/android/repository/$ANDROID_SDK_VER.zip && unzip -q -o $ANDROID_SDK_VER.zip -d $ANDROID_SDK_VER &>/dev/null; fi && ls -lFa ./
+- if [ ! -d "$ANDROID_NDK/platforms" ]; then cd $HOME_BUILD && wget https://dl.google.com/android/repository/$ANDROID_NDK_VER-linux-x86_64.zip && unzip -q -o $ANDROID_NDK_VER-linux-x86_64.zip -d ./ &>/dev/null && rm -f $ANDROID_NDK_VER-linux-x86_64.zip ; fi && ls -lFa ./
+- if [ ! -d "$ANDROID_HOME/tools" ]; then cd $HOME_BUILD && wget https://dl.google.com/android/repository/$ANDROID_SDK_VER.zip && unzip -q -o $ANDROID_SDK_VER.zip -d $ANDROID_SDK_VER &>/dev/null && rm -f $ANDROID_SDK_VER.zip ; fi && ls -lFa ./
 - if [ ! -d "$ANDROID_HOME/licenses" ]; then mkdir -p $ANDROID_HOME/licenses && echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license" && echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license" && echo -e "\n152e8995e4332c0dc80bc63bf01fe3bbccb0804a\nd975f751698a77b662f1254ddbeed3901e976f5a" > "$ANDROID_HOME/licenses/intel-android-extra-license" ; fi
 - if [ ! -f "$HOME_BUILD/.android/repositories.cfg" ]; then mkdir -p ${HOME_BUILD}/.android && echo "### User Sources for Android SDK Manager" >> $HOME_BUILD/.android/repositories.cfg && echo "count=0" >> $HOME_BUILD/.android/repositories.cfg ; fi
 - echo yyy | sdkmanager --update
