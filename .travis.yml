@@ -28,7 +28,7 @@ env:
     - ROOT_PATH="$HOME_BUILD/ament_ws/install_isolated;$ROS2WS/install_isolated"
     - COMMIT=${TRAVIS_COMMIT::8}
     - PATH="$PATH:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/tools/bin"
-    - ANDROID_PACKAGES="add-ons;addon-google_apis-google-24:add-ons;addon-google_gdk-google-19:build-tools;26.0.0:cmake;3.6.4111459:extras;android;gapid;3:extras;android;m2repository:extras;google;auto:extras;google;google_play_services:extras;google;instantapps:extras;google;m2repository:extras;google;market_apk_expansion:extras;google;market_licensing:extras;google;play_billing:extras;google;simulators:extras;google;webdriver:extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2:extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2:lldb;3.0:patcher;v4:platforms;android-26:tools:platform-tools"
+    - ANDROID_PACKAGES="add-ons;addon-google_apis-google-24:add-ons;addon-google_gdk-google-19:build-tools;26.0.0:cmake;3.6.4111459:extras;android;gapid;3:extras;android;m2repository:extras;google;auto:extras;google;google_play_services:extras;google;instantapps:extras;google;m2repository:extras;google;market_apk_expansion:extras;google;market_licensing:extras;google;play_billing:extras;google;simulators:extras;google;webdriver:extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2:extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2:lldb;2.3:patcher;v4:platforms;android-26:tools:platform-tools"
 
 
 #cache:
@@ -37,11 +37,11 @@ env:
 #    - $ANDROID_NDK_HOME
 
 before_install:
-- ./android_prepare.sh
+  - ./android_prepare.sh
 
 
 script:
-- cd $HOME_BUILD && docker run -u "$UID" -it --rm -v `pwd`:`pwd` --env-file $HOME_ENV -w `pwd` theosakamg7/ros2java:latest sh -c ". ament_ws/install_isolated/local_setup.sh && cd $ROS2WS"
+  - cd $HOME_BUILD && docker run -u "$UID" -it --rm -v $(pwd):$(pwd) --env-file "$HOME_ENV" -w $(pwd) theosakamg7/ros2java:latest sh -c ". ./ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && echo 'OK !!!!!!!!!'"
 
 after_success:
   - coveralls
