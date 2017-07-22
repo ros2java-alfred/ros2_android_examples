@@ -56,7 +56,7 @@ before_install:
 - cd $ROS2WS/src/eProsima/Fast-RTPS && git submodule init && git submodule update
 - echo "BUILD ROS2 WS..."
 - cd $HOME_BUILD && ls -lFa ./ && find . -maxdepth 3 -type d -not \( -path "./.git" -prune \)
-- cd $HOME_BUILD && docker run -u "$UID" -it --rm -v `pwd`:`pwd` --env-file $HOME_ENV -w `pwd` theosakamg7/ros2java:latest sh -c ". ./ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && ament build --isolated --cmake-args -DPYTHON_EXECUTABLE=$PYTHON_PATH -DTHIRDPARTY=ON -DCMAKE_FIND_ROOT_PATH=$ROOT_PATH -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_TOOLCHAIN_NAME=$ANDROID_GCC -DANDROID_STL=gnustl_shared -DANDROID_ABI=$ANDROID_ABI -DANDROID_NDK=$ANDROID_NDK_HOME -DANDROID_NATIVE_API_LEVEL=$ANDROID_VER -DCMAKE_TOOLCHAIN_FILE=$ROS2JAVA_PATH -DANDROID_HOME=$ANDROID_SDK_ROOT -- --ament-gradle-args -Pament.android_stl=gnustl_shared -Pament.android_abi=$ANDROID_ABI -Pament.android_ndk=$ANDROID_NDK_HOME -- "
+
 
 script:
 - cd $HOME_BUILD && docker run -u "$UID" -it --rm -v `pwd`:`pwd` --env-file $HOME_ENV -w `pwd` theosakamg7/ros2java:latest sh -c ". ament_ws/install_isolated/local_setup.sh && cd $ROS2WS"
