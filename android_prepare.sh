@@ -12,12 +12,12 @@ fi
 DOCKER_IMG="$DOCKER_REPO:$DOCKER_DIST"
 
 # Docker Hub.
-echo -e "\e[33mDocker Hub..\e[0m"
+echo -e "\e[33;1mDocker Hub..\e[0m"
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 docker pull $DOCKER_IMG
 
 # Make shared environment variables.
-echo -e "\e[33mMake shared environment variables.\e[0m"
+echo -e "\e[33;1mMake shared environment variables.\e[0m"
 cd $HOME_BUILD
 env | grep -E '^TRAVIS_' > $HOME_ENV && \
 env | grep -E '^ANDROID_' >> $HOME_ENV && \
@@ -30,11 +30,11 @@ echo -e "PYTHON_PATH=$PYTHON_PATH\nROOT_PATH=$ROOT_PATH" >> $HOME_ENV
 # Check container variables.
 if [ $DEBUG -eq 1 ]
 then
-echo -e "\e[33mCheck container variables.\e[0m"
+echo -e "\e[33;1mCheck container variables.\e[0m"
 docker run -u "$UID" -it --rm -v $(pwd):$(pwd) --env-file $HOME_ENV -w $(pwd) $DOCKER_IMG sh -c "locale && env | grep -E '^TRAVIS_' && env | grep -E '^CI_' && env | grep -E '^ROS' && env | grep -E '^ANDROID'"
 fi
 
-echo -e "\e[33mInstall ANDROID SDK & NDK...\e[0m"
+echo -e "\e[33;1mInstall ANDROID SDK & NDK...\e[0m"
 # Install NDK.
 if [ ! -d "$ANDROID_NDK_HOME/platforms" ]; then
     cd $HOME_BUILD
@@ -87,7 +87,7 @@ do
 done
 
 # INSTALL/BUILD ROS2 AMENT...
-echo -e "\e[33mINSTALL/BUILD ROS2 AMENT...\e[0m"
+echo -e "\e[33;1mINSTALL/BUILD ROS2 AMENT...\e[0m"
 mkdir -p $HOME_BUILD/ament_ws/src
 cd $HOME_BUILD/ament_ws
 docker run -u "$UID" -it --rm -v $(pwd):$(pwd) -w $(pwd) $DOCKER_IMG sh -c "/usr/bin/wget https://gist.githubusercontent.com/Theosakamg/e6084cfafa6b7ea690104424cef970a2/raw/ament_java.repos -nv"
@@ -95,7 +95,7 @@ docker run -u "$UID" -it --rm -v $(pwd):$(pwd) -w $(pwd) $DOCKER_IMG sh -c "/usr
 docker run -u "$UID" -it --rm -v $(pwd):$(pwd) -w $(pwd) $DOCKER_IMG sh -c "src/ament/ament_tools/scripts/ament.py build --symlink-install --isolated"
 
 # INSTALL ROS2 WS...
-echo -e "\e[33mINSTALL ROS2 WS...\e[0m"
+echo -e "\e[33;1mINSTALL ROS2 WS...\e[0m"
 mkdir -p $ROS2WS/src
 cd $ROS2WS
 docker run -u "$UID" -it --rm -v $(pwd):$(pwd) -w $(pwd) $DOCKER_IMG sh -c "/usr/bin/wget https://gist.githubusercontent.com/Theosakamg/617cd893813163cdcb9943a08d667964/raw/ros2_java_android.repos -nv"
@@ -127,7 +127,7 @@ then
   find . -maxdepth 3 -type d -not \( -path "./.git" -prune \)
 fi
 
-echo -e "\e[33mBUILD ROS2 WS...\e[0m"
+echo -e "\e[33;1mBUILD ROS2 WS...\e[0m"
 cd $HOME_BUILD
 docker run -u "$UID" -it --rm -v $(pwd):$(pwd) --env-file "$HOME_ENV" -w $(pwd) "$DOCKER_IMG" sh -c ". $HOME_BUILD/ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && ament build --isolated --cmake-args -DPYTHON_EXECUTABLE=\"$PYTHON_PATH\" -DTHIRDPARTY=ON -DCMAKE_FIND_ROOT_PATH=\"$ROOT_PATH\" -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_TOOLCHAIN_NAME=\"$ANDROID_GCC\" -DANDROID_STL=gnustl_shared -DANDROID_ABI=\"$ANDROID_ABI\" -DANDROID_NDK=\"$ANDROID_NDK_HOME\" -DANDROID_NATIVE_API_LEVEL=\"$ANDROID_VER\" -DCMAKE_TOOLCHAIN_FILE=\"$ROS2JAVA_PATH\" -DANDROID_HOME=\"$ANDROID_SDK_ROOT\" -- --ament-gradle-args -Pament.android_stl=gnustl_shared -Pament.android_abi=\"$ANDROID_ABI\" -Pament.android_ndk=\"$ANDROID_NDK_HOME\" -- "
 
