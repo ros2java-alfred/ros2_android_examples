@@ -24,8 +24,9 @@ env | grep -E '^ANDROID_' >> $HOME_ENV && \
 env | grep -E '^ROS' >> $HOME_ENV && \
 env | grep -E '^COVERALLS_' >> $HOME_ENV && \
 env | grep -E '^CI_' >> $HOME_ENV && \
+env | grep -E '^GRADLE_' >> $HOME_ENV && \
 echo -e "CI_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER\nCI_PULL_REQUEST=$TRAVIS_PULL_REQUEST\nCI_BRANCH=$TRAVIS_BRANCH" >> $HOME_ENV && \
-echo -e "PYTHON_PATH=$PYTHON_PATH\nROOT_PATH=$ROOT_PATH" >> $HOME_ENV
+echo -e "_JAVA_OPTIONS=-Duser.home=$HOME_BUILD\nPYTHON_PATH=$PYTHON_PATH\nROOT_PATH=$ROOT_PATH" >> $HOME_ENV
 
 # Check container variables.
 if [ $DEBUG -eq 1 ]

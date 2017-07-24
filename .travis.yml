@@ -22,6 +22,7 @@ env:
     - ANDROID_VER=android-21
     - ANDROID_GCC=arm-linux-androideabi-clang
     - ANDROID_ABI=armeabi-v7a
+    - GRADLE_USER_HOME=$HOME/build/.gradle
     - ROS2WS=$HOME_BUILD/ros2_java_ws
     - ROS2JAVA_PATH=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake
     - PYTHON_PATH=/usr/bin/python3
