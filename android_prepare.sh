@@ -3,7 +3,7 @@
 
 set -e
 
-DEBUG=0
+DEBUG=1
 if [ $DEBUG -eq 1 ]
 then
   set -ev
@@ -31,7 +31,7 @@ echo -e "PYTHON_PATH=$PYTHON_PATH\nROOT_PATH=$ROOT_PATH" >> $HOME_ENV
 if [ $DEBUG -eq 1 ]
 then
 echo -e "\e[33;1mCheck container variables.\e[0m"
-docker run -u "$UID" -it --rm -v $(pwd):$(pwd) --env-file $HOME_ENV -w $(pwd) $DOCKER_IMG sh -c "locale && env | grep -E '^TRAVIS_' && env | grep -E '^CI_' && env | grep -E '^ROS' && env | grep -E '^ANDROID'"
+docker run -u "$UID" -it --rm -v $(pwd):$(pwd) --env-file $HOME_ENV -w $(pwd) $DOCKER_IMG sh -c "locale && env | grep -E '^TRAVIS_' && env | grep -E '^CI_' && env | grep -E '^ROS' && env | grep -E '^ANDROID' && df -h"
 fi
 
 echo -e "\e[33;1mInstall ANDROID SDK & NDK...\e[0m"
@@ -44,6 +44,7 @@ fi
 if [ $DEBUG -eq 1 ]
 then
   ls -lFa ./
+  df -h
 fi
 
 # Install SDK.
@@ -56,6 +57,7 @@ fi
 if [ $DEBUG -eq 1 ]
 then
   ls -lFa ./
+  df -h
 fi
 
 # Add licenses SDK.
@@ -85,6 +87,11 @@ for package in $ARRAY
 do
   echo "\t- install $package" && echo y | sdkmanager "$package"
 done
+
+if [ $DEBUG -eq 1 ]
+then
+  df -h
+fi
 
 # INSTALL/BUILD ROS2 AMENT...
 echo -e "\e[33;1mINSTALL/BUILD ROS2 AMENT...\e[0m"
@@ -125,6 +132,7 @@ then
   echo "List $ROS2WS/src path"
   cd $ROS2WS/src
   find . -maxdepth 3 -type d -not \( -path "./.git" -prune \)
+  df -h
 fi
 
 echo -e "\e[33;1mBUILD ROS2 WS...\e[0m"
