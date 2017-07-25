@@ -42,7 +42,7 @@ before_install:
 
 
 script:
-  - cd $HOME_BUILD && docker run -u "$UID" -it --rm -v $(pwd):$(pwd) --env-file "$HOME_ENV" -w $(pwd) theosakamg7/ros2java:latest sh -c ". ./ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && echo 'OK !!!!!!!!!'"
+  - cd $HOME_BUILD && docker run -u "$UID" -it --rm -v $(pwd):$(pwd) --env-file "$HOME_ENV" -w $(pwd) "$DOCKER_REPO:$DOCKER_DIST" sh -c ". ./ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && echo 'OK !!!!!!!!!'"
 
 after_success:
   - coveralls
