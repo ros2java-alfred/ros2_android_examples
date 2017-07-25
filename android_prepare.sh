@@ -3,7 +3,7 @@
 
 set -e
 
-DEBUG=1
+DEBUG=0
 if [ $DEBUG -eq 1 ]
 then
   set -ev
