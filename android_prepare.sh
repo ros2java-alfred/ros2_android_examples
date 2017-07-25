@@ -12,12 +12,12 @@ fi
 DOCKER_IMG="$DOCKER_REPO:$DOCKER_DIST"
 
 # Docker Hub.
-echo -e "\e[33;1mDocker Hub..\e[0m"
+echo -e "\n\e[33;1mDocker Hub..\e[0m"
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 docker pull $DOCKER_IMG
 
 # Make shared environment variables.
-echo -e "\e[33;1mMake shared environment variables.\e[0m"
+echo -e "\n\e[33;1mMake shared environment variables.\e[0m"
 cd $HOME_BUILD
 env | grep -E '^TRAVIS_' > $HOME_ENV && \
 env | grep -E '^ANDROID_' >> $HOME_ENV && \
@@ -31,15 +31,15 @@ echo -e "_JAVA_OPTIONS=-Duser.home=$HOME_BUILD\nPYTHON_PATH=$PYTHON_PATH\nROOT_P
 # Check container variables.
 if [ $DEBUG -eq 1 ]
 then
-echo -e "\e[33;1mCheck container variables.\e[0m"
+echo -e "\n\e[33;1mCheck container variables.\e[0m"
 docker run -u "$UID" -it --rm -v $(pwd):$(pwd) --env-file $HOME_ENV -w $(pwd) $DOCKER_IMG sh -c "locale && env | grep -E '^TRAVIS_' && env | grep -E '^CI_' && env | grep -E '^ROS' && env | grep -E '^ANDROID' && df -h"
 fi
 
-echo -e "\e[33;1mInstall ANDROID SDK & NDK...\e[0m"
 # Install NDK.
 if [ ! -d "$ANDROID_NDK_HOME/platforms" ]; then
+    echo -e "\n\e[33;1mInstall ANDROID NDK...\e[0m"
     cd $HOME_BUILD
-    echo "Download NDK..." && wget https://dl.google.com/android/repository/$ANDROID_NDK_VER-linux-x86_64.zip -nv && echo "Unzip it..." && unzip -q -o $ANDROID_NDK_VER-linux-x86_64.zip -d ./ && echo "Remove zip file." && rm -f $ANDROID_NDK_VER-linux-x86_64.zip
+    echo "Download..." && wget https://dl.google.com/android/repository/$ANDROID_NDK_VER-linux-x86_64.zip -nv && echo "Unzip it..." && unzip -q -o $ANDROID_NDK_VER-linux-x86_64.zip -d ./ && echo "Remove zip file." && rm -f $ANDROID_NDK_VER-linux-x86_64.zip
 fi
 
 if [ $DEBUG -eq 1 ]
@@ -51,6 +51,7 @@ fi
 # Install SDK.
 if [ ! -d "$ANDROID_SDK_ROOT/tools" ]
 then
+  echo -e "\n\e[33;1mInstall ANDROID SDK...\e[0m"
   cd $HOME_BUILD
   echo "Download SDK..." && wget https://dl.google.com/android/repository/$ANDROID_SDK_VER.zip -nv && echo "Unzip it..." && unzip -q -o $ANDROID_SDK_VER.zip -d $ANDROID_SDK_VER && echo "Remove zip file." && rm -f $ANDROID_SDK_VER.zip
 fi
@@ -95,7 +96,7 @@ then
 fi
 
 # INSTALL/BUILD ROS2 AMENT...
-echo -e "\e[33;1mINSTALL/BUILD ROS2 AMENT...\e[0m"
+echo -e "\n\e[33;1mINSTALL/BUILD ROS2 AMENT...\e[0m"
 mkdir -p $HOME_BUILD/ament_ws/src
 cd $HOME_BUILD/ament_ws
 docker run -u "$UID" -it --rm -v $(pwd):$(pwd) -w $(pwd) $DOCKER_IMG sh -c "/usr/bin/wget https://gist.githubusercontent.com/Theosakamg/e6084cfafa6b7ea690104424cef970a2/raw/ament_java.repos -nv"
@@ -136,7 +137,7 @@ then
   df -h
 fi
 
-echo -e "\e[33;1mBUILD ROS2 WS...\e[0m"
+echo -e "\n\e[33;1mBUILD ROS2 WS...\e[0m"
 cd $HOME_BUILD
 docker run -u "$UID" -it --rm -v $(pwd):$(pwd) --env-file "$HOME_ENV" -w $(pwd) "$DOCKER_IMG" sh -c ". $HOME_BUILD/ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && ament build --symlink-install --isolated --cmake-args -DPYTHON_EXECUTABLE=\"$PYTHON_PATH\" -DTHIRDPARTY=ON -DCMAKE_FIND_ROOT_PATH=\"$ROOT_PATH\" -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_TOOLCHAIN_NAME=\"$ANDROID_GCC\" -DANDROID_STL=gnustl_shared -DANDROID_ABI=\"$ANDROID_ABI\" -DANDROID_NDK=\"$ANDROID_NDK_HOME\" -DANDROID_NATIVE_API_LEVEL=\"$ANDROID_VER\" -DCMAKE_TOOLCHAIN_FILE=\"$ROS2JAVA_PATH\" -DANDROID_HOME=\"$ANDROID_SDK_ROOT\" -- --ament-gradle-args -g $HOME_BUILD/.gradle -Pament.android_stl=gnustl_shared -Pament.android_abi=\"$ANDROID_ABI\" -Pament.android_ndk=\"$ANDROID_NDK_HOME\" --stacktrace -- "
 
