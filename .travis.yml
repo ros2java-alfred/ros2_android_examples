@@ -29,7 +29,7 @@ env:
     - ROOT_PATH="$HOME_BUILD/ament_ws/install_isolated;$ROS2WS/install_isolated"
     - COMMIT=${TRAVIS_COMMIT::8}
     - PATH="$PATH:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/tools/bin"
-    - ANDROID_PACKAGES="add-ons;addon-google_apis-google-24:build-tools;26.0.0:cmake;3.6.4111459:extras;android;gapid;3:extras;android;m2repository:extras;google;auto:extras;google;m2repository:extras;google;market_apk_expansion:extras;google;market_licensing:extras;google;play_billing:extras;google;simulators:extras;google;webdriver:extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2:extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2:lldb;2.3:patcher;v4:platforms;android-21:tools:platform-tools"
+    - ANDROID_PACKAGES="add-ons;addon-google_apis-google-24:build-tools;26.0.1:cmake;3.6.4111459:extras;android;gapid;3:extras;android;m2repository:extras;google;auto:extras;google;m2repository:extras;google;market_apk_expansion:extras;google;market_licensing:extras;google;play_billing:extras;google;simulators:extras;google;webdriver:extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2:extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2:lldb;2.3:patcher;v4:platforms;android-21:tools:platform-tools"
 
 
 #cache:
