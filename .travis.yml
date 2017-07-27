@@ -1,4 +1,4 @@
-# Travis file for ROS2 Java.
+# Travis file for ROS2 Java for Android.
 # Version 2
 
 sudo: required
@@ -10,9 +10,9 @@ services:
 
 env:
   global:
+    - PKG_INCLUDE="ros2_android_listener ros2_android_talker ros2_listener_android ros2_talker_android"
     - HOME_BUILD=$HOME/build
     - HOME_ENV=$HOME/.env
-    - ENV_PATH=$HOME_ENV
     - ANDROID_SDK_VER=sdk-tools-linux-3859397
     - ANDROID_NDK_VER=android-ndk-r15b
     - ANDROID_SDK_HOME=$HOME_BUILD
@@ -22,30 +22,23 @@ env:
     - ANDROID_VER=android-21
     - ANDROID_GCC=arm-linux-androideabi-clang
     - ANDROID_ABI=armeabi-v7a
-    - GRADLE_USER_HOME=$HOME/build/.gradle
     - ROS2WS=$HOME_BUILD/ros2_java_ws
     - ROS2JAVA_PATH=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake
     - PYTHON_PATH=/usr/bin/python3
     - ROOT_PATH="$HOME_BUILD/ament_ws/install_isolated;$ROS2WS/install_isolated"
     - COMMIT=${TRAVIS_COMMIT::8}
     - PATH="$PATH:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/tools/bin"
-    - ANDROID_PACKAGES="add-ons;addon-google_apis-google-24:build-tools;26.0.1:cmake;3.6.4111459:extras;android;gapid;3:extras;android;m2repository:extras;google;auto:extras;google;m2repository:extras;google;market_apk_expansion:extras;google;market_licensing:extras;google;play_billing:extras;google;simulators:extras;google;webdriver:extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2:extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2:lldb;2.3:patcher;v4:platforms;android-21:tools:platform-tools"
-
-
-#cache:
-#  directories:
-#    - $ANDROID_SDK_ROOT
-#    - $ANDROID_NDK_HOME
+    - ANDROID_PACKAGES="add-ons;addon-google_apis-google-24:build-tools;26.0.1:cmake;3.6.4111459:extras;android;gapid;3:extras;android;m2repository:extras;google;auto:extras;google;m2repository:extras;google;market_apk_expansion:extras;google;market_licensing:extras;google;play_billing:extras;google;simulators:extras;google;webdriver:extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2:extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2:lldb;2.3:patcher;v4:platforms;$ANDROID_VER:tools:platform-tools:system-images;$ANDROID_VER;default;$ANDROID_ABI"
 
 before_install:
-  - ./android_prepare.sh
-
+  - echo -e "\n\e[33;1mDocker Hub..\e[0m"; docker pull $DOCKER_REPO:$DOCKER_DIST
+  - echo -e "\n\e[33;1mMake shared environment variables.\e[0m"; cd $HOME_BUILD && env | grep -E '^TRAVIS_' > $HOME_ENV && env | grep -E '^ANDROID_' >> $HOME_ENV && env | grep -E '^ROS' >> $HOME_ENV && env | grep -E '^COVERALLS_' >> $HOME_ENV && env | grep -E '^CI_' >> $HOME_ENV && echo -e "CI_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER\nCI_PULL_REQUEST=$TRAVIS_PULL_REQUEST\nCI_BRANCH=$TRAVIS_BRANCH" >> $HOME_ENV && echo -e "PYTHON_PATH=$PYTHON_PATH\nROOT_PATH=$ROOT_PATH" >> $HOME_ENV
+  - echo -e "\n\e[33;1mBUILD ROS2 WS...\e[0m"; cd $HOME_BUILD
+  - docker run -u 0 -it --rm -v $HOME_BUILD/ros2java-alfred/ros2_android_examples:$ROS2WS/src/ros2_java/ros2_android_examples --env-file "$HOME_ENV" -w $(pwd) "$DOCKER_REPO:$DOCKER_DIST" sh -c ". $HOME_BUILD/ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && ament build --symlink-install --isolated --skip-packages \"$PKG_EXCLUDE\" --cmake-args -DPYTHON_EXECUTABLE=\"$PYTHON_PATH\" -DTHIRDPARTY=ON -DCMAKE_FIND_ROOT_PATH=\"$ROOT_PATH\" -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_TOOLCHAIN_NAME=\"$ANDROID_GCC\" -DANDROID_STL=gnustl_shared -DANDROID_ABI=\"$ANDROID_ABI\" -DANDROID_NDK=\"$ANDROID_NDK_HOME\" -DANDROID_NATIVE_API_LEVEL=\"$ANDROID_VER\" -DCMAKE_TOOLCHAIN_FILE=\"$ROS2JAVA_PATH\" -DANDROID_HOME=\"$ANDROID_SDK_ROOT\" -- --ament-gradle-args -g $HOME_BUILD/.gradle -Pament.android_stl=gnustl_shared -Pament.android_abi=\"$ANDROID_ABI\" -Pament.android_ndk=\"$ANDROID_NDK_HOME\" --stacktrace --daemon --configure-on-demand -- "
 
 script:
-  - cd $HOME_BUILD && docker run -u "$UID" -it --rm -v $(pwd):$(pwd) --env-file "$HOME_ENV" -w $(pwd) "$DOCKER_REPO:$DOCKER_DIST" sh -c ". ./ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && echo 'OK !!!!!!!!!'"
-
-after_success:
-  - coveralls
+  - echo -e "\n\e[33;1mTEST ROS2 WS...\e[0m"; cd $HOME_BUILD
+  - docker run -u 0 -it --rm -v $HOME_BUILD/ros2java-alfred/ros2_android_examples:$ROS2WS/src/ros2_java/ros2_android_examples --env-file "$HOME_ENV" -w $(pwd) "$DOCKER_REPO:$DOCKER_DIST" sh -c ". $HOME_BUILD/ament_ws/install_isolated/local_setup.sh && cd $ROS2WS && ament  --symlink-install --isolated --only-packages \"$PKG_INCLUDE\" --cmake-args -DPYTHON_EXECUTABLE=\"$PYTHON_PATH\" -DTHIRDPARTY=ON -DCMAKE_FIND_ROOT_PATH=\"$ROOT_PATH\" -DANDROID_FUNCTION_LEVEL_LINKING=OFF -DANDROID_TOOLCHAIN_NAME=\"$ANDROID_GCC\" -DANDROID_STL=gnustl_shared -DANDROID_ABI=\"$ANDROID_ABI\" -DANDROID_NDK=\"$ANDROID_NDK_HOME\" -DANDROID_NATIVE_API_LEVEL=\"$ANDROID_VER\" -DCMAKE_TOOLCHAIN_FILE=\"$ROS2JAVA_PATH\" -DANDROID_HOME=\"$ANDROID_SDK_ROOT\" -- --ament-gradle-args -g $HOME_BUILD/.gradle -Pament.android_stl=gnustl_shared -Pament.android_abi=\"$ANDROID_ABI\" -Pament.android_ndk=\"$ANDROID_NDK_HOME\" --stacktrace --daemon --configure-on-demand -- "
 
 notifications:
   webhooks:
