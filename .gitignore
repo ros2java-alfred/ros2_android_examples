@@ -35,10 +35,12 @@ captures/
 # Intellij
 *.iml
 **/.idea
+.idea/
 .idea/workspace.xml
 
 # Keystore files
 *.jks
 
 # Ament
+=======
 .ament_dependencies.properties
