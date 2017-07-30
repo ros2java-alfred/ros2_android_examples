@@ -14,8 +14,8 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0'
-        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:0.4.10"
-//        classpath "org.ros2.rcljava:rclJavaPlugin:0.4.10"
+        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:0.5.0"
+//        classpath "org.ros2.rcljava:rclJavaPlugin:0.5.0"
     }
 }
 apply plugin: 'com.android.application'
@@ -27,7 +27,7 @@ repositories {
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '26.0.0 rc2'
+    buildToolsVersion '26.0.1'
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 25
