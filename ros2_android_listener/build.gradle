@@ -13,10 +13,12 @@ buildscript {
 //        mavenLocal()
     }
 
+    apply from : '../build.gradle'
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
-        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:0.5.0"
-//        classpath "org.ros2.rcljava:rclJavaPlugin:0.5.0"
+        classpath "com.android.tools.build:gradle:$rootProject.ext.gradlePlugin"
+        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:$rootProject.ext.gradleRcljava"
+//        classpath "org.ros2.rcljava:rclJavaPlugin:$rootProject.ext.gradleRcljava"
     }
 }
 
@@ -25,13 +27,14 @@ apply plugin: 'org.ros2.rcljava'
 
 repositories {
     jcenter()
+    google()
 }
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '26.0.1'
+    buildToolsVersion "$rootProject.ext.android.buildTool"
     defaultConfig {
-        minSdkVersion 9
+        minSdkVersion 14
         targetSdkVersion 25
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -50,4 +53,20 @@ android {
 }
 
 dependencies {
+    implementation "com.google.guava:guava:$rootProject.ext.dep.guava"
+    implementation "com.android.support:support-core-utils:$rootProject.ext.dep.support"
+
+    // Required for local unit tests (JUnit 4 framework)
+    testCompile "junit:junit:$rootProject.ext.dep.junit"
+
+    // Required for instrumented tests
+    androidTestCompile "com.android.support:support-annotations:$rootProject.ext.dep.support"
+    androidTestCompile "com.android.support.test:runner:$rootProject.ext.dep.test"
+
+    // Set this dependency to use JUnit 4 rules
+    androidTestCompile "com.android.support.test:rules:$rootProject.ext.dep.test"
+    // Set this dependency to build and run Espresso tests
+//    androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.ext.dep.espresso"
+    // Set this dependency to build and run UI Automator tests
+//    androidTestCompile "com.android.support.test.uiautomator:uiautomator-v18:$rootProject.ext.dep.uiautomator"
 }

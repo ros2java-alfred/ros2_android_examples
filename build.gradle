@@ -1,0 +1,19 @@
+ext{
+    gradlePlugin  = '3.0.0'
+    gradleRcljava = '0.5.0'
+    android = [
+        compileSdk : 25,
+        buildTool : '26.0.2',
+        minSdk : 14,
+        maxSdk : 26,
+        targetSdk : 25
+    ]
+    dep = [
+        junit :   '4.12',
+        guava :   '11.0.2',
+        support : '25.4.0',
+        test :    '0.5',
+        espresso : '3.0.1',
+        uiautomator : '2.1.3'
+    ]
+}
