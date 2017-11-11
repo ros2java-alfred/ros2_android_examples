@@ -15,6 +15,7 @@
 package org.ros2.android.examples.talker;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
