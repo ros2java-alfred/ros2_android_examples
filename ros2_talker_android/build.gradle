@@ -1,22 +1,22 @@
 buildscript {
     repositories {
-        maven {
-            url 'https://maven.google.com'
-        }
-        maven {
-            url 'https://dl.google.com/dl/android/maven2/'
-        }
+        jcenter()
+        mavenCentral()
+        google()
         maven {
             url "https://plugins.gradle.org/m2/"
+            name 'Gradle'
         }
-        jcenter()
 //        mavenLocal()
     }
 
+    apply from: 'https://gist.githubusercontent.com/Theosakamg/e67a28a61e6775e3129a5746f6d57aee/raw/ros2_java_version.gradle'
+//    apply from: '../modules.gradle'
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
-        classpath "gradle.plugin.org.ros2.rcljava:rclJavaPlugin:0.5.0"
-//        classpath "org.ros2.rcljava:rclJavaPlugin:0.5.0"
+        classpath lib.android.build
+        classpath lib.rcljava
+//        classpath "org.ros2.rcljava:rclJavaPlugin:${rootProject.config.gradle.rcljava}"
     }
 }
 
@@ -25,22 +25,25 @@ apply plugin: 'org.ros2.rcljava'
 
 repositories {
     jcenter()
+    mavenCentral()
+    google()
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '26.0.1'
+    compileSdkVersion rootProject.config.version.android.compileSdk
+    buildToolsVersion rootProject.config.version.android.buildTool
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 25
+        minSdkVersion rootProject.config.version.android.minSdk
+        targetSdkVersion rootProject.config.version.android.targetSdk
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
+        // TODO(mick)
         abortOnError false
     }
     compileOptions {
-//        sourceCompatibility JavaVersion.VERSION_1_8
-//        targetCompatibility JavaVersion.VERSION_1_8
+//        sourceCompatibility project.javaVersion
+//        targetCompatibility project.javaVersion
     }
     buildTypes {
         debug {
@@ -50,4 +53,23 @@ android {
 }
 
 dependencies {
+    compile lib.guava
+
+    // Required for support old android
+    compile lib.android.support.coreUtils
+    compile lib.android.support.appCompat
+
+    // Required for local unit tests (JUnit 4 framework)
+    testCompile lib.junit
+
+    // Required for instrumented tests
+    androidTestCompile lib.android.support.annotations
+    androidTestCompile lib.android.test.runner
+
+    // Set this dependency to use JUnit 4 rules
+    androidTestCompile lib.android.test.rules
+    // Set this dependency to build and run Espresso tests
+//    androidTestCompile lib.android.test.espressoCore
+    // Set this dependency to build and run UI Automator tests
+//    androidTestCompile lib.android.test.uiAutomation
 }
