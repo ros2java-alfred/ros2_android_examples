@@ -15,7 +15,6 @@
 package org.ros2.android.examples.talker;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,12 +23,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import org.ros2.android.core.BaseRosActivity;
-import org.ros2.android.core.BaseRosService;
+import org.ros2.android.core.RosConfig;
+import org.ros2.android.core.RosManager;
 import org.ros2.android.core.node.AndroidNativeNode;
 import org.ros2.android.core.node.AndroidNode;
 import org.ros2.android.examples.hardware.sensor.BarometerSensorNode;
 import org.ros2.android.examples.hardware.sensor.LightSensorNode;
 import org.ros2.android.examples.hardware.sensor.ProximitySensorNode;
+
 import org.ros2.rcljava.node.topic.Publisher;
 import org.ros2.rcljava.time.WallTimer;
 import org.ros2.rcljava.time.WallTimerCallback;
@@ -83,7 +84,8 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity implements OnClic
 
     private AndroidNode node;
 
-    private BaseRosService executor;
+    private RosConfig config;
+    private RosManager manager;
 
     private Button buttonStart;
     private Button buttonStop;
@@ -94,15 +96,12 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity implements OnClic
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.main);
 
-        this.buttonStart = (Button)findViewById(R.id.buttonStart);
+        this.buttonStart = this.findViewById(R.id.buttonStart);
         this.buttonStart.setOnClickListener(this); // Register the onClick listener with the implementation above
 
-        this.buttonStop = (Button)findViewById(R.id.buttonStop);
+        this.buttonStop = this.findViewById(R.id.buttonStop);
         this.buttonStop.setOnClickListener(this); // Register the onClick listener with the implementation above
         this.buttonStop.setEnabled(false);
-
-//        ROS2AndroidTalkerApplication app = (ROS2AndroidTalkerApplication)getApplication();
-//        executor = app.getRosService();
     }
 
     public void onClick(View v) {
@@ -114,7 +113,6 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity implements OnClic
                 this.stopListener();
                 break;
         }
-
     }
 
     //Create an anonymous implementation of OnClickListener
@@ -123,35 +121,34 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity implements OnClic
         Toast.makeText(this, "The Start button was clicked.", Toast.LENGTH_LONG).show();
         Log.d(logtag,"onClick() ended - start button");
 
-        buttonStart.setEnabled(false);
-        buttonStop.setEnabled(true);
+        this.buttonStart.setEnabled(false);
+        this.buttonStop.setEnabled(true);
 
-        if (node == null) {
-            node = new TalkerNode(this, "tessst");
+        if (this.node == null) {
+            this.node = new TalkerNode(this, "talker");
 
-//                nodeAccelrometer    = new AccelerometerSensorNode(this, "accel_node", 100, TimeUnit.NANOSECONDS);
-//                nodeTemp            = new AmbientTemperatureSensorNode(this, "temp_node", 2, TimeUnit.SECONDS); // Disable android phone.
-            nodeBarometer       = new BarometerSensorNode(this,"pressure_node", 1, TimeUnit.SECONDS);
-//                nodeCompass         = new CompassSensorNode(this, "compass_node", 500, TimeUnit.NANOSECONDS);
-//                nodeGyroscope       = new GyroscopeSensorNode(this, "gyro_node", 100, TimeUnit.NANOSECONDS);
-//                nodeImu             = new ImuSensorNode(this, "imu_node", 100, TimeUnit.NANOSECONDS);
-            nodeLight           = new LightSensorNode(this, "light_node", 500, TimeUnit.MILLISECONDS);
-            nodeProximity       = new ProximitySensorNode(this, "proximity_node", 100, TimeUnit.MILLISECONDS);
+//                this.nodeAccelrometer    = new AccelerometerSensorNode(this, "accel_node", 100, TimeUnit.NANOSECONDS);
+//                this.nodeTemp            = new AmbientTemperatureSensorNode(this, "temp_node", 2, TimeUnit.SECONDS); // Disable android phone.
+            this.nodeBarometer       = new BarometerSensorNode(this,"pressure_node", 1, TimeUnit.SECONDS);
+//                this.nodeCompass         = new CompassSensorNode(this, "compass_node", 500, TimeUnit.NANOSECONDS);
+//                this.nodeGyroscope       = new GyroscopeSensorNode(this, "gyro_node", 100, TimeUnit.NANOSECONDS);
+//                this.nodeImu             = new ImuSensorNode(this, "imu_node", 100, TimeUnit.NANOSECONDS);
+            this.nodeLight           = new LightSensorNode(this, "light_node", 500, TimeUnit.MILLISECONDS);
+            this.nodeProximity       = new ProximitySensorNode(this, "proximity_node", 100, TimeUnit.MILLISECONDS);
 
-            ROS2AndroidTalkerApplication app = (ROS2AndroidTalkerApplication) getApplication();
-            executor = app.getRosService();
-            executor.addNode(node);
-
-            if (nodeAccelerometer != null)  { executor.addNode(nodeAccelerometer); }
-            if (nodeTemp != null)           { executor.addNode(nodeTemp); }
-            if (nodeBarometer != null)      { executor.addNode(nodeBarometer); }
-            if (nodeCompass != null)        { executor.addNode(nodeCompass); }
-            if (nodeGyroscope != null)      { executor.addNode(nodeGyroscope); }
-            if (nodeImu != null)            { executor.addNode(nodeImu); }
-            if (nodeLight != null)          { executor.addNode(nodeLight); }
-            if (nodeProximity != null)      { executor.addNode(nodeProximity); }
+            if (this.manager != null) {
+                this.manager.addNode(this.node);
+                if (this.nodeAccelerometer != null) { this.manager.addNode(this.nodeAccelerometer); }
+                if (this.nodeTemp != null) { this.manager.addNode(this.nodeTemp); }
+                if (this.nodeBarometer != null) { this.manager.addNode(this.nodeBarometer); }
+                if (this.nodeCompass != null) { this.manager.addNode(this.nodeCompass); }
+                if (this.nodeGyroscope != null) { this.manager.addNode(this.nodeGyroscope); }
+                if (this.nodeImu != null) { this.manager.addNode(this.nodeImu); }
+                if (this.nodeLight != null) { this.manager.addNode(this.nodeLight); }
+                if (this.nodeProximity != null) { this.manager.addNode(this.nodeProximity); }
+            }
         }
-    };
+    }
 
     // Create an anonymous implementation of OnClickListener
     private void stopListener() {
@@ -161,25 +158,35 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity implements OnClic
         buttonStart.setEnabled(true);
         buttonStop.setEnabled(false);
 
-        if (node != null)               { executor.removeNode(node); }
+        if (this.manager != null) {
+            if (node != null) { this.manager.removeNode(node); }
 
-        if (nodeAccelerometer != null)  { executor.removeNode(nodeAccelerometer); }
-        if (nodeTemp != null)           { executor.removeNode(nodeTemp); }
-        if (nodeBarometer != null)      { executor.removeNode(nodeBarometer); }
-        if (nodeCompass != null)        { executor.removeNode(nodeCompass); }
-        if (nodeGyroscope != null)      { executor.removeNode(nodeGyroscope); }
-        if (nodeImu != null)            { executor.removeNode(nodeImu); }
-        if (nodeLight != null)          { executor.removeNode(nodeLight); }
-        if (nodeProximity != null)      { executor.removeNode(nodeProximity); }
-
+            if (nodeAccelerometer != null) { this.manager.removeNode(nodeAccelerometer); }
+            if (nodeTemp != null) { this.manager.removeNode(nodeTemp); }
+            if (nodeBarometer != null) { this.manager.removeNode(nodeBarometer); }
+            if (nodeCompass != null) { this.manager.removeNode(nodeCompass); }
+            if (nodeGyroscope != null) { this.manager.removeNode(nodeGyroscope); }
+            if (nodeImu != null) { this.manager.removeNode(nodeImu); }
+            if (nodeLight != null) { this.manager.removeNode(nodeLight); }
+            if (nodeProximity != null) { this.manager.removeNode(nodeProximity); }
+        }
         Log.d(logtag,"onClick() ended - stop button");
-    };
+    }
 
 
     @Override
     protected void onStart() {//activity is started and visible to the user
         Log.d(logtag,"onStart() called");
         super.onStart();
+
+        this.manager = new RosManager(this, new Runnable() {
+            @Override
+            public void run() {
+                config = manager.getConfig(RosConfig.CONFIG_TYPE_DEFAULT);
+                manager.connect(config);
+                startListener();
+            }
+        });
     }
     @Override
     protected void onResume() {//activity was resumed and is visible again
@@ -197,8 +204,12 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity implements OnClic
     @Override
     protected void onStop() { //the activity is not visible anymore
         Log.d(logtag,"onStop() called");
-        super.onStop();
 
+        if (this.manager != null) {
+            this.manager.disconnect();
+        }
+
+        super.onStop();
     }
     @Override
     protected void onDestroy() {//android has killed this activity

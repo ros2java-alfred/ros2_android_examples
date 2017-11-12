@@ -21,22 +21,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.widget.TextView;
 import android.os.AsyncTask;
 
 import org.ros2.rcljava.RCLJava;
 import org.ros2.rcljava.node.Node;
 import org.ros2.rcljava.node.topic.Publisher;
 
-public class ROS2TalkerActivity extends Activity
-{
+public class ROS2TalkerActivity extends Activity {
 
     private Talker talker;
 
-    private class Talker extends AsyncTask<String, Void, String> {
+    private static class Talker extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... text) {
             Node node = RCLJava.createNode("talker");
@@ -68,7 +63,7 @@ public class ROS2TalkerActivity extends Activity
         }
     }
 
-    private static String logtag = "ROS2TalkerActivity";//for use as the tag when logging
+    private static final String logtag = "ROS2TalkerActivity";//for use as the tag when logging
 
     /** Called when the activity is first created. */
     @Override
@@ -82,11 +77,12 @@ public class ROS2TalkerActivity extends Activity
         Button buttonStop = (Button)findViewById(R.id.buttonStop);
         buttonStop.setOnClickListener(stopListener); // Register the onClick listener with the implementation above
         buttonStop.setEnabled(false);
+
         RCLJava.rclJavaInit();
     }
 
     //Create an anonymous implementation of OnClickListener
-    private OnClickListener startListener = new OnClickListener() {
+    private final OnClickListener startListener = new OnClickListener() {
         public void onClick(View v) {
             Log.d(logtag,"onClick() called - start button");
             Toast.makeText(ROS2TalkerActivity.this, "The Start button was clicked.", Toast.LENGTH_LONG).show();
@@ -101,7 +97,7 @@ public class ROS2TalkerActivity extends Activity
     };
 
     // Create an anonymous implementation of OnClickListener
-    private OnClickListener stopListener = new OnClickListener() {
+    private final OnClickListener stopListener = new OnClickListener() {
         public void onClick(View v) {
             Log.d(logtag,"onClick() called - stop button");
             Toast.makeText(ROS2TalkerActivity.this, "The Stop button was clicked.", Toast.LENGTH_LONG).show();
