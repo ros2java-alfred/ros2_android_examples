@@ -24,7 +24,6 @@
 
     <application android:label="@string/app_name" android:icon="@drawable/ic_launcher" android:name=".ROS2AndroidTalkerApplication"
         android:fullBackupContent="@xml/backup_descriptor">
-        <service android:name="org.ros2.android.core.BaseRosService" />
         <activity android:name=".ROS2AndroidTalkerActivity"
                   android:label="@string/app_name">
             <intent-filter>
