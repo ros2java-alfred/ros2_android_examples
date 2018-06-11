@@ -28,6 +28,7 @@ import org.ros2.android.core.RosManager;
 import org.ros2.android.core.node.AndroidNativeNode;
 import org.ros2.android.core.node.AndroidNode;
 import org.ros2.android.examples.hardware.sensor.BarometerSensorNode;
+import org.ros2.android.examples.hardware.sensor.CameraSensorNode;
 import org.ros2.android.examples.hardware.sensor.LightSensorNode;
 import org.ros2.android.examples.hardware.sensor.ProximitySensorNode;
 
@@ -127,6 +128,11 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity implements OnClic
         if (this.node == null) {
             this.node = new TalkerNode(this, "talker");
 
+            CameraSensorNode cameraSensorNode = null;
+            if (CameraSensorNode.checkCameraHardware(this)) {
+                cameraSensorNode = new CameraSensorNode("camera", this);
+            }
+
 //                this.nodeAccelrometer    = new AccelerometerSensorNode(this, "accel_node", 100, TimeUnit.NANOSECONDS);
 //                this.nodeTemp            = new AmbientTemperatureSensorNode(this, "temp_node", 2, TimeUnit.SECONDS); // Disable android phone.
             this.nodeBarometer       = new BarometerSensorNode(this,"pressure_node", 1, TimeUnit.SECONDS);
@@ -138,6 +144,8 @@ public class ROS2AndroidTalkerActivity extends BaseRosActivity implements OnClic
 
             if (this.manager != null) {
                 this.manager.addNode(this.node);
+                if (cameraSensorNode != null) { this.manager.addNode(cameraSensorNode); }
+
                 if (this.nodeAccelerometer != null) { this.manager.addNode(this.nodeAccelerometer); }
                 if (this.nodeTemp != null) { this.manager.addNode(this.nodeTemp); }
                 if (this.nodeBarometer != null) { this.manager.addNode(this.nodeBarometer); }
